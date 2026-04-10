@@ -27,7 +27,10 @@ fun SettledNavGraph() {
             )
         }
         composable(Route.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToAdd = { /* Navigate to S3 */ },
+                onNavigateToSettings = { /* Navigate to S9 */ }
+            )
         }
     }
 }
