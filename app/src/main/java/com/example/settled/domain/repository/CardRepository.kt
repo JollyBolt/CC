@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface CardRepository {
     fun getAllCards(): Flow<Result<List<Card>>>
+    suspend fun addCard(bankName: String, cardName: String, lastFourDigits: String, statementDate: Int): Result<Unit>
     suspend fun insertDummyData() // For UI testing purposes
 }

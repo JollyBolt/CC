@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val cardRepository: CardRepository
@@ -22,6 +25,9 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private val _uiEvent = Channel<HomeUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
         // Insert dummy data on startup for testing
@@ -66,7 +72,7 @@ class HomeViewModel @Inject constructor(
             if (currentState.cards.size >= 3) {
                 _uiState.update { currentState.copy(showPaywall = true) }
             } else {
-                // To be wired to navigation later
+                viewModelScope.launch { _uiEvent.send(HomeUiEvent.NavigateToAdd) }
             }
         }
     }
@@ -78,7 +84,7 @@ class HomeViewModel @Inject constructor(
             if (card?.isLocked == true) {
                 _uiState.update { currentState.copy(showPaywall = true) }
             } else {
-                // To be wired to navigation later
+                viewModelScope.launch { _uiEvent.send(HomeUiEvent.NavigateToDetails(cardId)) }
             }
         }
     }

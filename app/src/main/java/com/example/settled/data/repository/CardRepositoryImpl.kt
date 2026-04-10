@@ -53,6 +53,21 @@ class CardRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun addCard(bankName: String, cardName: String, lastFourDigits: String, statementDate: Int): Result<Unit> {
+        return try {
+            val entity = CardEntity(
+                bankName = bankName,
+                cardName = cardName,
+                lastFourDigits = lastFourDigits,
+                statementDate = statementDate
+            )
+            cardDao.insertCard(entity)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Failed to add card", e)
+        }
+    }
+
     override suspend fun insertDummyData() {
         val dummies = listOf(
             CardEntity(bankName = "HDFC", cardName = "HDFC Regalia", lastFourDigits = "1234", statementDate = 10),
