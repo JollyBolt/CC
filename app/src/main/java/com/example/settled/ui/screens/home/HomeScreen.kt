@@ -27,7 +27,8 @@ import androidx.lifecycle.repeatOnLifecycle
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToSettings: () -> Unit,
-    onNavigateToAdd: () -> Unit
+    onNavigateToAdd: () -> Unit,
+    onNavigateToDetails: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -37,7 +38,7 @@ fun HomeScreen(
             viewModel.uiEvent.collect { event ->
                 when (event) {
                     HomeUiEvent.NavigateToAdd -> onNavigateToAdd()
-                    is HomeUiEvent.NavigateToDetails -> { /* To be mapped later */ }
+                    is HomeUiEvent.NavigateToDetails -> onNavigateToDetails(event.cardId)
                 }
             }
         }

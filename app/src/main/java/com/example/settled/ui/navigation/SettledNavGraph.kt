@@ -11,6 +11,11 @@ sealed class Route(val route: String) {
     object Splash : Route("splash")
     object Home : Route("home")
     object AddCard : Route("add_card")
+    
+    // Pass cardId dynamically
+    object Details : Route("details/{cardId}") {
+        fun createRoute(cardId: String) = "details/$cardId"
+    }
 }
 
 @Composable
@@ -30,7 +35,8 @@ fun SettledNavGraph() {
         composable(Route.Home.route) {
             HomeScreen(
                 onNavigateToAdd = { navController.navigate(Route.AddCard.route) },
-                onNavigateToSettings = { /* Navigate to S9 */ }
+                onNavigateToSettings = { /* Navigate to S9 */ },
+                onNavigateToDetails = { cardId -> navController.navigate(Route.Details.createRoute(cardId)) }
             )
         }
         composable(Route.AddCard.route) {
@@ -41,6 +47,12 @@ fun SettledNavGraph() {
                         popUpTo(Route.Home.route) { inclusive = true }
                     }
                 }
+            )
+        }
+        
+        composable(Route.Details.route) {
+            com.example.settled.ui.screens.details.CardDetailsScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }
