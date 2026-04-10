@@ -226,7 +226,7 @@ These are non-negotiable and must never be violated by generated code.
 - **Never log full card numbers, CVV, or expiry** — not even in debug logs
 - **Never send last four digits to analytics** — PostHog events must contain only card IDs (UUIDs)
 - **Never request SMS, Email, Contacts, or Location permissions** — if generated code adds any of these to the manifest, remove them immediately
-- **Never store sensitive data in SharedPreferences** — use `EncryptedSharedPreferences` for anything sensitive (auth tokens, biometric settings)
+- **Never store sensitive data in SharedPreferences** — use `EncryptedSharedPreferences` for anything sensitive (auth tokens)
 - The only card identifier ever stored or transmitted is the last 4 digits + bank name
 
 ---

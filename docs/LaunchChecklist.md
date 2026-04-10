@@ -60,7 +60,6 @@
 - [ ] Subscription status is checked on every app launch
 - [ ] Pro features unlock immediately after successful purchase
 - [ ] Pro features lock correctly if subscription lapses
-- [ ] Biometric lock works on supported devices (fingerprint and face)
 - [ ] CSV export generates a valid, readable file
 - [ ] Upsell bottom sheet displays correctly and links to Play Store subscription
 
@@ -86,7 +85,7 @@
 - [ ] Crashlytics reports contain no user-identifiable data
 - [ ] Account deletion removes all data from Room AND Firestore
 - [ ] Data export (CSV) generates correct data and works on Pro tier
-- [ ] EncryptedSharedPreferences used for auth tokens and biometric settings
+- [ ] EncryptedSharedPreferences used for auth tokens
 - [ ] Firestore security rules tested — users cannot read or write other users' data
 
 ---
@@ -177,10 +176,9 @@
 
 ## 8. Monetization Setup
 
-- [ ] Google Play Billing subscription product created in Play Console:
-  - Product ID: `settled_pro_monthly`
-  - Price: ₹50/month
-  - Free trial: consider 7-day free trial to reduce friction
+- [ ] Google Play Billing subscription products created in Play Console:
+  - Product ID: `settled_pro_monthly` (₹50/month)
+  - Product ID: `settled_pro_yearly` (₹550/year)
 - [ ] Subscription tested end-to-end using a test account
   - [ ] Purchase flow completes successfully
   - [ ] Pro features unlock after purchase

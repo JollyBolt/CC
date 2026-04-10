@@ -113,8 +113,7 @@ Each card moves through the following states in a defined sequence:
 | NFR2 | **Latency** | UI transitions and "Mark as Paid" actions must be sub-100ms. Local-first architecture is mandatory. |
 | NFR3 | **Widget Reliability** | The widget must update its Traffic Light status within 60 seconds of a state change in the app or an automated cycle reset. |
 | NFR4 | **Offline Availability** | If offline, the app must queue changes locally and sync silently when connectivity returns. No user action required. |
-| NFR5 | **Security** | Pro users must have the option to gate the app behind system biometric authentication (Fingerprint / Face ID). |
-| NFR6 | **Data Minimalism** | Last 4 digits and Bank Name are the only card identifiers. No full card numbers, no PII, must ever touch the database. |
+| NFR5 | **Data Minimalism** | Last 4 digits and Bank Name are the only card identifiers. No full card numbers, no PII, must ever touch the database. |
 
 ---
 
@@ -159,15 +158,14 @@ Cycle Resets → Back to "Pending" → If previous was "Minimum Due", ⚠️ fla
 
 ## 10. Monetization (Freemium Model)
 
-| Feature | Free Tier | Pro Tier (₹50/month) |
-|---------|-----------|----------------------|
+| Feature | Free Tier | Pro Tier (₹50/month or ₹550/year) |
+|---------|-----------|-----------------------------------|
 | Cards tracked | Up to 3 | Unlimited |
 | Home screen widget | Most urgent card only | Full multi-card dashboard |
 | Payment History Graph | ✅ 3-month history | ✅ 12-month history |
-| Biometric Lock | ❌ | ✅ |
 | Data Export (CSV) | ❌ | ✅ |
 
-**Pro Tier Upsell UX:** When a Free Tier user tries to add a 4th card, a bottom sheet appears — *"You've reached the 3-card limit on the free plan. Upgrade to Pro for ₹50/month to track unlimited cards."* — with options to Upgrade or Dismiss. No hard block. Existing cards are unaffected.
+**Pro Tier Upsell UX:** When a Free Tier user tries to add a 4th card, a bottom sheet appears — *"You've reached the 3-card limit on the free plan. Upgrade to Pro for ₹50/month or ₹550/year to track unlimited cards."* — with options to Upgrade or Dismiss. No hard block. Existing cards are unaffected.
 
 ---
 

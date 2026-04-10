@@ -100,7 +100,7 @@ MainActivity
 ├── AddCardScreen       ← Bank selection, nickname, last 4, statement date
 ├── CardDetailScreen    ← Mark as Paid, payment type, platform selection
 ├── HistoryScreen       ← 6/12 month payment graph per card
-├── SettingsScreen      ← Biometric lock, data export, account deletion
+├── SettingsScreen      ← Data export, account deletion
 └── PaywallScreen       ← Pro tier upsell bottom sheet
 ```
 
@@ -137,7 +137,7 @@ Each screen has a dedicated ViewModel. The ViewModel holds the UI state as a `St
 | `AddCardViewModel` | Bank list, due date auto-calculation, card creation |
 | `CardDetailViewModel` | Mark as Paid flow, payment logging |
 | `HistoryViewModel` | Payment graph data aggregation |
-| `SettingsViewModel` | Biometric toggle, export, deletion |
+| `SettingsViewModel` | Data export, deletion |
 
 **Due Date Auto-Calculation (AddCardViewModel):**
 ```
@@ -523,9 +523,9 @@ No server call is needed mid-session.
 | Feature | Where gate is enforced |
 |---|---|
 | 4th card addition | `AddCardViewModel` checks ProStatus before saving |
+| Card limit gating | `HomeViewModel` locks cards 4+ (sorted by creation date) if Free |
 | Full widget dashboard | `GlanceWidget` renders single card if Free |
 | 12-month history | `HistoryViewModel` caps data at 3 months if Free |
-| Biometric lock | `SettingsViewModel` hides toggle if Free |
 | CSV export | `SettingsViewModel` shows upsell if Free |
 
 ---
@@ -536,7 +536,6 @@ No server call is needed mid-session.
 |---|---|
 | Unauthorised data access | Firestore security rules enforce UID-scoped access |
 | Sensitive data in DB | Only last 4 digits stored — no full PAN, CVV, or expiry |
-| App access | Optional biometric lock (Pro) via Android BiometricPrompt API |
 | Data in transit | All Firestore communication uses TLS by default |
 | Analytics data | PostHog receives only anonymous event names, no user identifiers |
 | Crash reports | Crashlytics receives stack traces only — no user data is attached |
