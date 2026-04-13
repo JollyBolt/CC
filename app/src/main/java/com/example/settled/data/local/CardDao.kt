@@ -25,4 +25,7 @@ interface CardDao {
     
     @Query("SELECT * FROM payment_logs WHERE cardId = :cardId ORDER BY timestamp DESC")
     fun getLogsForCard(cardId: String): Flow<List<PaymentLogEntity>>
+
+    @Query("SELECT * FROM payment_logs ORDER BY timestamp DESC")
+    fun getAllPaymentLogs(): Flow<List<PaymentLogEntity>>
 }
