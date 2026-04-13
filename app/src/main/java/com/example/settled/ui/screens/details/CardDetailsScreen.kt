@@ -1,5 +1,6 @@
 package com.example.settled.ui.screens.details
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,19 +8,31 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.settled.domain.model.Card
 import com.example.settled.domain.model.CardStatus
 import com.example.settled.domain.model.PaymentLog
+import com.example.settled.ui.screens.details.components.CardVisual
+import com.example.settled.ui.screens.details.components.CardStatusSection
+import com.example.settled.ui.screens.details.components.CardDatesBox
+import com.example.settled.ui.screens.details.components.PaymentHistorySection
 import com.example.settled.ui.screens.details.components.PaymentBottomSheet
 import com.example.settled.ui.theme.*
 import java.text.SimpleDateFormat
@@ -33,14 +46,42 @@ fun CardDetailsScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel.uiEvent, lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    CardDetailsUiEvent.NavigateBack -> onNavigateBack()
+                    is CardDetailsUiEvent.ShowSnackbar -> {
+                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Card Details") },
+                title = { 
+                    if (uiState is CardDetailsUiState.Success) {
+                        Text((uiState as CardDetailsUiState.Success).card.bankName, fontWeight = FontWeight.Bold) 
+                    } else {
+                        Text("Loading...")
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    if (uiState is CardDetailsUiState.Success) {
+                        IconButton(onClick = { viewModel.onEvent(CardDetailsEvent.DeleteCardClicked) }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete Card")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -51,11 +92,11 @@ fun CardDetailsScreen(
         floatingActionButton = {
             if (uiState is CardDetailsUiState.Success) {
                 ExtendedFloatingActionButton(
-                    onClick = { viewModel.onEvent(CardDetailsEvent.MarkAsPaidClicked) },
+                    onClick = { viewModel.onEvent(CardDetailsEvent.RecordPaymentClicked) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Text("Mark as Paid", fontWeight = FontWeight.Bold)
+                    Text("Record Payment", fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -71,40 +112,40 @@ fun CardDetailsScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 is CardDetailsUiState.Error -> {
-                    Text(state.message, color = MaterialTheme.colorScheme.error, modifier = Modifier.align(Alignment.Center))
+                    Text(state.message ?: "Unknown error", color = MaterialTheme.colorScheme.error, modifier = Modifier.align(Alignment.Center))
                 }
                 is CardDetailsUiState.Success -> {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        HeroCardPreview(state.card)
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 80.dp) // Space for FAB
+                    ) {
+                        item {
+                            CardVisual(
+                                card = state.card,
+                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
+                            )
+                        }
                         
-                        Spacer(modifier = Modifier.height(24.dp))
+                        item {
+                            CardStatusSection(
+                                card = state.card,
+                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                            )
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            CardDatesBox(
+                                card = state.card,
+                                modifier = Modifier.padding(horizontal = 24.dp)
+                            )
+                        }
                         
-                        Text(
-                            text = "Payment History",
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(horizontal = 24.dp),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        if (state.paymentLogs.isEmpty()) {
-                            Box(
-                                modifier = Modifier.fillMaxWidth().weight(1f),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("No payment history yet.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                        } else {
-                            LazyColumn(
-                                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                items(state.paymentLogs) { log ->
-                                    PaymentLogItem(log)
-                                }
-                            }
+                        item {
+                            Spacer(modifier = Modifier.height(32.dp))
+                            PaymentHistorySection(
+                                paymentLogs = state.paymentLogs
+                            )
                         }
                     }
 
@@ -114,107 +155,35 @@ fun CardDetailsScreen(
                             onDismiss = { viewModel.onEvent(CardDetailsEvent.PaymentSheetDismissed) }
                         )
                     }
+
+                    if (state.showDeleteConfirmation) {
+                        AlertDialog(
+                            onDismissRequest = { viewModel.onEvent(CardDetailsEvent.DismissDeleteConfirmation) },
+                            title = { Text("Delete Card?") },
+                            text = { 
+                                Text("Are you sure you want to remove ${state.card.cardName}? This action cannot be undone.") 
+                            },
+                            confirmButton = {
+                                Button(
+                                    onClick = { viewModel.onEvent(CardDetailsEvent.ConfirmDeleteCard) },
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                ) {
+                                    if (state.isDeletingCard) {
+                                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onError)
+                                    } else {
+                                        Text("Delete", color = MaterialTheme.colorScheme.onError)
+                                    }
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { viewModel.onEvent(CardDetailsEvent.DismissDeleteConfirmation) }) {
+                                    Text("Cancel")
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun HeroCardPreview(card: Card) {
-    val statusColor = when (card.status) {
-        CardStatus.OVERDUE -> StatusOverdue
-        CardStatus.DUE_SOON -> StatusDueSoon
-        CardStatus.PENDING -> StatusPending
-        CardStatus.PAID -> StatusPaid
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(24.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = card.bankName,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(statusColor.copy(alpha = 0.2f))
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = card.status.name,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = statusColor,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = card.cardName,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        
-        Spacer(modifier = Modifier.height(4.dp))
-        
-        Text(
-            text = "•••• ${card.lastFourDigits}",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text("Statement Date", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text("${card.statementDate} of month", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
-            }
-            Column(horizontalAlignment = Alignment.End) {
-                Text("Status", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(if (card.daysUntilDue <= 0) "${card.daysUntilDue * -1} days overdue" else "${card.daysUntilDue} days left", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface)
-            }
-        }
-    }
-}
-
-@Composable
-fun PaymentLogItem(log: PaymentLog) {
-    val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    val dateString = formatter.format(Date(log.timestamp))
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            Text(log.type, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Text("Via ${log.platform}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        Text(dateString, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

@@ -7,10 +7,12 @@ sealed class CardDetailsUiState {
     object Loading : CardDetailsUiState()
     data class Success(
         val card: Card,
-        val paymentLogs: List<PaymentLog> = emptyList(),
+        val paymentLogs: List<PaymentLog>,
         val showPaymentSheet: Boolean = false,
         val isSavingPayment: Boolean = false,
-        val paymentError: String? = null
+        val paymentError: String? = null,
+        val showDeleteConfirmation: Boolean = false,
+        val isDeletingCard: Boolean = false
     ) : CardDetailsUiState()
-    data class Error(val message: String) : CardDetailsUiState()
+    data class Error(val message: String?) : CardDetailsUiState()
 }
