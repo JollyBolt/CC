@@ -30,10 +30,6 @@ class HomeViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
-        // Insert dummy data on startup for testing
-        viewModelScope.launch {
-            cardRepository.insertDummyData()
-        }
         loadCards()
     }
 
@@ -41,7 +37,7 @@ class HomeViewModel @Inject constructor(
         cardRepository.getAllCards().onEach { result ->
             when (result) {
                 is Result.Success -> {
-                    // Sort order: OVERDUE -> DUE_SOON -> PENDING -> PAID
+                    // Sort order: SOON -> DUE -> PAID
                     val sortedCards = result.data.sortedWith(
                         compareBy<Card> { it.status.ordinal }
                             .thenBy { it.daysUntilDue }
@@ -62,6 +58,13 @@ class HomeViewModel @Inject constructor(
             HomeEvent.AddCardClicked -> checkCardLimitBeforeAdd()
             is HomeEvent.CardClicked -> handleCardClick(event.cardId)
             HomeEvent.DismissPaywall -> dismissPaywall()
+            HomeEvent.SeedTestData -> seedTestData()
+        }
+    }
+
+    private fun seedTestData() {
+        viewModelScope.launch {
+            cardRepository.insertDummyData()
         }
     }
 
