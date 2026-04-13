@@ -12,19 +12,14 @@ val LightSurface = Color(0xFFFFFFFF)
 val LightSurfaceVariant = Color(0xFFE9ECEF)
 
 // Accents
-val PrimaryVibrant = Color(0xFF2979FF) // Electric Blue
-val SecondaryVibrant = Color(0xFF00E676) // Neon Green
-val TertiaryVibrant = Color(0xFFD500F9) // Purple pop
+val PrimaryBrand = Color(0xFF4A5BB6) // Darker periwinkle/purple from mockup bottom nav
+val SecondaryBrand = Color(0xFF2D7A36) 
+val TertiaryBrand = Color(0xFFBD1532) 
 
 // semantic colors
-val StatusPaid = Color(0xFF00E676)
-val StatusPaidBg = Color(0x3300E676)
-val StatusPending = Color(0xFFB0BEC5)
-val StatusPendingBg = Color(0x33B0BEC5)
-val StatusDueSoon = Color(0xFFFFD740)
-val StatusDueSoonBg = Color(0x33FFD740)
-val StatusOverdue = Color(0xFFFF5252)
-val StatusOverdueBg = Color(0x33FF5252)
+val StatusPaid = Color(0xFF2E7D32)
+val StatusDue = Color(0xFFFBC02D)
+val StatusSoon = Color(0xFFD32F2F)
 
 val TextPrimaryDark = Color(0xFFFFFFFF)
 val TextSecondaryDark = Color(0xFFA0AAB2)

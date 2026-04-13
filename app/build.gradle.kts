@@ -40,6 +40,15 @@ android {
     buildFeatures {
         compose = true
     }
+    sourceSets {
+        getByName("main") {
+            res.srcDirs(
+                "src/main/res",
+                "src/main/res/drawable/bank_logos_square",
+                "src/main/res/drawable/bank_logos_horizontal"
+            )
+        }
+    }
 }
 
 dependencies {
@@ -53,6 +62,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
     
     // Navigation
     implementation(libs.androidx.navigation.compose)
