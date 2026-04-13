@@ -44,8 +44,9 @@ android {
         getByName("main") {
             res.srcDirs(
                 "src/main/res",
-                "src/main/res/drawable/bank_logos_square",
-                "src/main/res/drawable/bank_logos_horizontal"
+                "src/main/res-organized/payment-apps",
+                "src/main/res-organized/bank-horizontal",
+                "src/main/res-organized/bank-square"
             )
         }
     }
