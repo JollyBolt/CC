@@ -1,35 +1,32 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizard.settings.xml
-.idea/codeStyles
-.idea/shelf
-/.idea/vcs.xml
-/.idea/dictionaries
-/.idea/inspectionProfiles
-/build
-/app/build
-/captures
-.externalNativeBuild
-.cxx
+# Build and IDE files
+.gradle/
+.idea/
+build/
+app/build/
+.kotlin/
+.vscode/
+
+# Local configuration
+local.properties
 /google-services.json
-.DS_Store
-*.apk
-*.output.json
+
+# Signing files
 *.keystore
 *.jks
 !debug.keystore
 !debug.jks
-.navigation/
-captures/
+
+# Logs and temp files
+logs/
+*.log
 *.swp
 *~
-.cxx/
+.DS_Store
+
+# Android-specific
+*.apk
+*.output.json
+.navigation/
+captures/
 .externalNativeBuild/
-.kotlin/
-.vscode/
+.cxx/
