@@ -62,14 +62,17 @@ fun CardVisual(
         }
     }
 
-    val bankLogo: Int? = null /* when {
-        card.bankName.contains("HDFC", ignoreCase = true) -> R.drawable.logo_hdfc
-        card.bankName.contains("ICICI", ignoreCase = true) -> R.drawable.logo_icici
-        card.bankName.contains("SBI", ignoreCase = true) -> R.drawable.logo_sbi
-        card.bankName.contains("AXIS", ignoreCase = true) -> R.drawable.logo_axis
-        card.bankName.contains("KOTAK", ignoreCase = true) -> R.drawable.logo_kotak
+    val bankLogo = when {
+        card.bankName.contains("HDFC", ignoreCase = true) -> R.drawable.logo_bank_hdfc_horiz
+        card.bankName.contains("ICICI", ignoreCase = true) -> R.drawable.logo_bank_icici_horiz
+        card.bankName.contains("SBI", ignoreCase = true) -> R.drawable.logo_bank_sbi_horiz
+        card.bankName.contains("AXIS", ignoreCase = true) -> R.drawable.logo_bank_axis_horiz
+        card.bankName.contains("KOTAK", ignoreCase = true) -> R.drawable.logo_bank_kotak_horiz
+        card.bankName.contains("HSBC", ignoreCase = true) -> R.drawable.logo_bank_hsbc_horiz
+        card.bankName.contains("YES", ignoreCase = true) -> R.drawable.logo_bank_yes_horiz
+        card.bankName.contains("RBL", ignoreCase = true) -> R.drawable.logo_bank_rbl_horiz
         else -> null
-    } */
+    }
 
     Box(
         modifier = modifier

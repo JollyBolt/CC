@@ -60,31 +60,31 @@ object PaymentPlatformRegistry {
             id = "CRED",
             displayLabel = "CRED",
             fallbackIcon = Icons.Default.FlashOn,
-            logoRes = null  // TODO: R.drawable.logo_payment_cred
+            logoRes = R.drawable.logo_payment_cred
         ),
         PaymentPlatform(
             id = "GPAY",
             displayLabel = "GPAY",
             fallbackIcon = Icons.Default.PhoneAndroid,
-            logoRes = null  // TODO: R.drawable.logo_payment_gpay
+            logoRes = R.drawable.logo_payment_gpay
         ),
         PaymentPlatform(
             id = "AMAZON_PAY",
             displayLabel = "AMAZON PAY",
             fallbackIcon = Icons.Default.ShoppingBag,
-            logoRes = null  // TODO: R.drawable.logo_payment_amazon_pay
+            logoRes = R.drawable.logo_payment_amazon_pay
         ),
         PaymentPlatform(
             id = "PHONEPE",
             displayLabel = "PHONEPE",
             fallbackIcon = Icons.Default.Payment,
-            logoRes = null  // TODO: R.drawable.logo_payment_phonepe
+            logoRes = R.drawable.logo_payment_phonepe
         ),
         PaymentPlatform(
             id = "PAYTM",
             displayLabel = "PAYTM",
             fallbackIcon = Icons.Default.AccountBalanceWallet,
-            logoRes = null  // TODO: R.drawable.logo_payment_paytm
+            logoRes = R.drawable.logo_payment_paytm
         ),
     )
 
