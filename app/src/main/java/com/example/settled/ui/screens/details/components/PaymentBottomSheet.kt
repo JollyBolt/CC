@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import com.example.settled.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -168,8 +170,32 @@ fun PaymentBottomSheet(
             // ── Payment Platform ─────────────────────────────────────
             SectionLabel("PAYMENT PLATFORM")
             Spacer(modifier = Modifier.height(12.dp))
+            
+            val card = (uiState as? CardDetailsUiState.Success)?.card
+            val bankSquareLogo = card?.let {
+                when {
+                    it.bankName.contains("HDFC", ignoreCase = true) -> R.drawable.logo_bank_hdfc_sq
+                    it.bankName.contains("ICICI", ignoreCase = true) -> R.drawable.logo_bank_icici_sq
+                    it.bankName.contains("SBI", ignoreCase = true) -> R.drawable.logo_bank_sbi_sq
+                    it.bankName.contains("AXIS", ignoreCase = true) -> R.drawable.logo_bank_axis_sq
+                    it.bankName.contains("KOTAK", ignoreCase = true) -> R.drawable.logo_bank_kotak_sq
+                    it.bankName.contains("HSBC", ignoreCase = true) -> R.drawable.logo_bank_hsbc_sq
+                    it.bankName.contains("YES", ignoreCase = true) -> R.drawable.logo_bank_yes_sq
+                    it.bankName.contains("RBL", ignoreCase = true) -> R.drawable.logo_bank_rbl_sq
+                    it.bankName.contains("AMEX", ignoreCase = true) || it.bankName.contains("American Express", ignoreCase = true) -> R.drawable.logo_bank_amex_sq
+                    else -> null
+                }
+            }
+
             // Two rows of 3 if more than 4, single row for 4 or fewer
-            val platforms = PaymentPlatformRegistry.all
+            val platforms = PaymentPlatformRegistry.all.map { platform ->
+                if (platform.id == "BANK_APP" && bankSquareLogo != null) {
+                    platform.copy(logoRes = bankSquareLogo)
+                } else {
+                    platform
+                }
+            }
+            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -335,7 +361,11 @@ private fun PaymentTypeChip(
                 color = borderColor,
                 shape = RoundedCornerShape(14.dp)
             )
-            .clickable(onClick = onClick)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            )
             .padding(vertical = 14.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -356,12 +386,17 @@ private fun PlatformIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val bgColor    = if (selected) PrimaryBrand else MaterialTheme.colorScheme.surfaceVariant
-    val iconTint   = if (selected) Color.White  else MaterialTheme.colorScheme.onSurfaceVariant
+    val bgColor    = if (selected) PrimaryBrand.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant
+    val iconTint   = if (selected) PrimaryBrand else MaterialTheme.colorScheme.onSurfaceVariant
     val labelColor = if (selected) PrimaryBrand else MaterialTheme.colorScheme.onSurfaceVariant
+    val border     = if (selected) BorderStroke(2.dp, PrimaryBrand) else null
 
     Column(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick
+        ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
@@ -369,6 +404,7 @@ private fun PlatformIconButton(
             modifier = Modifier
                 .size(56.dp)
                 .clip(RoundedCornerShape(14.dp))
+                .let { if (border != null) it.border(border, RoundedCornerShape(14.dp)) else it }
                 .background(bgColor),
             contentAlignment = Alignment.Center
         ) {

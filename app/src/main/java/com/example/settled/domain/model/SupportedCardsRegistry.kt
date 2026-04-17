@@ -7,7 +7,10 @@ object SupportedCardsRegistry {
         "Axis Bank",
         "SBI Card",
         "Kotak Mahindra",
-        "American Express"
+        "American Express",
+        "HSBC",
+        "RBL Bank",
+        "YES Bank"
     )
 
     fun getCardsForBank(bankName: String): List<String> {
@@ -18,6 +21,9 @@ object SupportedCardsRegistry {
             "SBI Card" -> listOf("SimplyCLICK", "SimplySAVE", "Prime", "Elite")
             "Kotak Mahindra" -> listOf("League Platinum", "Mojo", "Zen")
             "American Express" -> listOf("Platinum Charge", "Gold", "SmartEarn")
+            "HSBC" -> listOf("Visa Platinum", "Cashback", "Smart Value")
+            "RBL Bank" -> listOf("Shoprite", "Platinum Maxima", "Cookies")
+            "YES Bank" -> listOf("Prosperity Rewards", "Premia", "First")
             else -> emptyList()
         }
     }

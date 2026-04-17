@@ -28,7 +28,8 @@ object AppModule {
             context,
             SettledDatabase::class.java,
             "settled_db"
-        ).build()
+        ).addMigrations(SettledDatabase.MIGRATION_1_2, SettledDatabase.MIGRATION_2_3)
+            .build()
     }
 
     @Provides

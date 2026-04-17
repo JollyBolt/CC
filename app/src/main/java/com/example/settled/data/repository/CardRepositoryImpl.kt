@@ -25,31 +25,53 @@ class CardRepositoryImpl @Inject constructor(
         val currentMonth = now.monthValue
         val currentYear = now.year
         
-        // Check if any payment log exists for the current cycle
-        val latestLog = logs.filter { it.cardId == entity.id && it.cycleMonth == currentMonth && it.cycleYear == currentYear }
-            .maxByOrNull { it.timestamp }
-            
-        // Calculate due date assuming 20 days after statement date
-        val safeStatementDay = entity.statementDate.coerceAtMost(now.lengthOfMonth())
-        val statementDateThisMonth = LocalDate.of(currentYear, currentMonth, safeStatementDay)
-        val dueDateThisMonth = statementDateThisMonth.plusDays(20)
+        // Active statement is either this month's or last month's
+        val safeStatementDay = entity.statementDay.coerceAtMost(YearMonth.of(currentYear, currentMonth).lengthOfMonth())
+        val statementThisMonth = LocalDate.of(currentYear, currentMonth, safeStatementDay)
         
-        val dueDate = if (now.isBefore(statementDateThisMonth)) {
-            // Previous month's statement governs the active due date right now
-            val prevMonth = now.minusMonths(1)
-            val prevSafeDay = entity.statementDate.coerceAtMost(prevMonth.lengthOfMonth())
-            val prevMonthStatement = LocalDate.of(prevMonth.year, prevMonth.monthValue, prevSafeDay)
-            prevMonthStatement.plusDays(20)
+        val activeStatementDate: LocalDate
+        val activeDueDate: LocalDate
+        
+        if (now.isBefore(statementThisMonth)) {
+            // We are before this month's statement, so the previous month's statement is the one we are tracking
+            val prevMonthDate = now.minusMonths(1)
+            val prevMonthYear = prevMonthDate.year
+            val prevMonthValue = prevMonthDate.monthValue
+            val prevSafeDay = entity.statementDay.coerceAtMost(YearMonth.of(prevMonthYear, prevMonthValue).lengthOfMonth())
+            activeStatementDate = LocalDate.of(prevMonthYear, prevMonthValue, prevSafeDay)
         } else {
-            dueDateThisMonth
+            // We are on or after this month's statement
+            activeStatementDate = statementThisMonth
         }
+
+        // Calculate active due date based on manual dueDay
+        // If dueDay < statementDay, the due date is in the month following the statement
+        if (entity.dueDay >= entity.statementDay) {
+            // Due date is in the same month as statement
+            val safeDueDay = entity.dueDay.coerceAtMost(YearMonth.of(activeStatementDate.year, activeStatementDate.monthValue).lengthOfMonth())
+            activeDueDate = LocalDate.of(activeStatementDate.year, activeStatementDate.monthValue, safeDueDay)
+        } else {
+            // Due date is in the month following the statement
+            val nextMonth = activeStatementDate.plusMonths(1)
+            val safeDueDay = entity.dueDay.coerceAtMost(YearMonth.of(nextMonth.year, nextMonth.monthValue).lengthOfMonth())
+            activeDueDate = LocalDate.of(nextMonth.year, nextMonth.monthValue, safeDueDay)
+        }
+
+        // Check if any payment log exists for the cycle defined by activeStatementDate
+        val latestLog = logs.filter { 
+            it.cardId == entity.id && 
+            it.cycleMonth == activeStatementDate.monthValue && 
+            it.cycleYear == activeStatementDate.year 
+        }.maxByOrNull { it.timestamp }
         
-        val daysUntilDue = ChronoUnit.DAYS.between(now, dueDate).toInt()
+        val daysUntilDue = ChronoUnit.DAYS.between(now, activeDueDate).toInt()
         
         val status = if (latestLog != null) {
             CardStatus.PAID
         } else {
-            if (daysUntilDue <= 2) {
+            if (now.isAfter(activeDueDate)) {
+                CardStatus.OVERDUE
+            } else if (daysUntilDue <= 2) {
                 CardStatus.SOON
             } else {
                 CardStatus.DUE
@@ -74,8 +96,8 @@ class CardRepositoryImpl @Inject constructor(
             bankName = entity.bankName,
             cardName = entity.cardName,
             lastFourDigits = entity.lastFourDigits,
-            statementDate = entity.statementDate,
-            dueDate = dueDate.dayOfMonth,
+            statementDay = entity.statementDay,
+            dueDay = entity.dueDay,
             status = status,
             minimumDueLastCycle = minimumDue,
             daysUntilDue = daysUntilDue,
@@ -99,13 +121,19 @@ class CardRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addCard(bankName: String, cardName: String, lastFourDigits: String, statementDate: Int): Result<Unit> {
+    override suspend fun addCard(bankName: String, cardName: String, lastFourDigits: String, statementDay: Int, dueDay: Int): Result<Unit> {
         return try {
+            val existing = cardDao.getCardByVariant(bankName, cardName)
+            if (existing != null) {
+                return Result.Error("You already have this $cardName card from $bankName.")
+            }
+            
             val entity = CardEntity(
                 bankName = bankName,
                 cardName = cardName,
                 lastFourDigits = lastFourDigits,
-                statementDate = statementDate
+                statementDay = statementDay,
+                dueDay = dueDay
             )
             cardDao.insertCard(entity)
             Result.Success(Unit)
@@ -174,8 +202,8 @@ class CardRepositoryImpl @Inject constructor(
 
     override suspend fun insertDummyData() {
         val dummies = listOf(
-            CardEntity(id = "test-icici-amazon", bankName = "ICICI", cardName = "Amazon Pay", lastFourDigits = "3456", statementDate = 26),
-            CardEntity(id = "test-sbi-cashback", bankName = "SBI", cardName = "Cashback Card", lastFourDigits = "9012", statementDate = 22)
+            CardEntity(id = "test-icici-amazon", bankName = "ICICI", cardName = "Amazon Pay", lastFourDigits = "3456", statementDay = 26, dueDay = 15),
+            CardEntity(id = "test-sbi-cashback", bankName = "SBI", cardName = "Cashback Card", lastFourDigits = "9012", statementDay = 22, dueDay = 10)
         )
         dummies.forEach { cardDao.insertCard(it) }
     }

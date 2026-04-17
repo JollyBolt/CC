@@ -71,6 +71,7 @@ fun CardVisual(
         card.bankName.contains("HSBC", ignoreCase = true) -> R.drawable.logo_bank_hsbc_horiz
         card.bankName.contains("YES", ignoreCase = true) -> R.drawable.logo_bank_yes_horiz
         card.bankName.contains("RBL", ignoreCase = true) -> R.drawable.logo_bank_rbl_horiz
+        card.bankName.contains("AMEX", ignoreCase = true) || card.bankName.contains("American Express", ignoreCase = true) -> R.drawable.logo_bank_amex_horiz
         else -> null
     }
 
@@ -175,8 +176,8 @@ fun CardVisualPreview() {
                     bankName = "HDFC",
                     cardName = "Regalia Gold",
                     lastFourDigits = "1234",
-                    statementDate = 10,
-                    dueDate = 28,
+                    statementDay = 10,
+                    dueDay = 30,
                     status = CardStatus.PAID,
                     minimumDueLastCycle = false,
                     daysUntilDue = 18
@@ -188,8 +189,8 @@ fun CardVisualPreview() {
                     bankName = "ICICI",
                     cardName = "Amazon Pay",
                     lastFourDigits = "5678",
-                    statementDate = 26,
-                    dueDate = 15,
+                    statementDay = 26,
+                    dueDay = 15,
                     status = CardStatus.DUE,
                     minimumDueLastCycle = false,
                     daysUntilDue = 4
@@ -201,8 +202,8 @@ fun CardVisualPreview() {
                     bankName = "SBI",
                     cardName = "Cashback Card",
                     lastFourDigits = "9012",
-                    statementDate = 22,
-                    dueDate = 11,
+                    statementDay = 22,
+                    dueDay = 10,
                     status = CardStatus.SOON,
                     minimumDueLastCycle = false,
                     daysUntilDue = 0

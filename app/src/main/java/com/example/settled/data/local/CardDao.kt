@@ -13,6 +13,9 @@ interface CardDao {
 
     @Query("SELECT * FROM cards WHERE id = :cardId AND isDeleted = 0")
     fun getCardById(cardId: String): Flow<CardEntity?>
+    
+    @Query("SELECT * FROM cards WHERE bankName = :bankName AND cardName = :cardName AND isDeleted = 0")
+    suspend fun getCardByVariant(bankName: String, cardName: String): CardEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCard(card: CardEntity)

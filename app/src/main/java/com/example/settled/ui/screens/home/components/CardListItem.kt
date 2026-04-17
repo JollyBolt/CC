@@ -48,6 +48,7 @@ fun CardListItem(
         CardStatus.SOON -> StatusSoon
         CardStatus.DUE -> StatusDue
         CardStatus.PAID -> StatusPaid
+        CardStatus.OVERDUE -> Color.Red
     }
     
     val statusText = when (card.status) {
@@ -66,6 +67,7 @@ fun CardListItem(
             }
             "Status: Due $daysStr"
         }
+        CardStatus.OVERDUE -> "Status: OVERDUE"
     }
 
     val hasLogo = when {
@@ -87,6 +89,7 @@ fun CardListItem(
             card.bankName.contains("HSBC", ignoreCase = true) -> R.drawable.logo_bank_hsbc_sq
             card.bankName.contains("YES", ignoreCase = true) -> R.drawable.logo_bank_yes_sq
             card.bankName.contains("RBL", ignoreCase = true) -> R.drawable.logo_bank_rbl_sq
+            card.bankName.contains("AMEX", ignoreCase = true) || card.bankName.contains("American Express", ignoreCase = true) -> R.drawable.logo_bank_amex_sq
             else -> null
         }
     } else null
@@ -189,8 +192,8 @@ fun CardListItemPreview() {
                     bankName = "HDFC",
                     cardName = "Regalia Gold",
                     lastFourDigits = "1234",
-                    statementDate = 10,
-                    dueDate = 28,
+                    statementDay = 10,
+                    dueDay = 28,
                     status = CardStatus.PAID,
                     minimumDueLastCycle = false,
                     daysUntilDue = 18,
@@ -211,8 +214,8 @@ fun CardListItemPreview() {
                     bankName = "ICICI",
                     cardName = "Amazon Pay",
                     lastFourDigits = "5678",
-                    statementDate = 26,
-                    dueDate = 15,
+                    statementDay = 26,
+                    dueDay = 15,
                     status = CardStatus.DUE,
                     minimumDueLastCycle = false,
                     daysUntilDue = 4
@@ -225,8 +228,8 @@ fun CardListItemPreview() {
                     bankName = "SBI",
                     cardName = "Cashback",
                     lastFourDigits = "9012",
-                    statementDate = 22,
-                    dueDate = 11,
+                    statementDay = 22,
+                    dueDay = 11,
                     status = CardStatus.SOON,
                     minimumDueLastCycle = false,
                     daysUntilDue = 0

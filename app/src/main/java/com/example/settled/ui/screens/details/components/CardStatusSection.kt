@@ -25,6 +25,7 @@ fun CardStatusSection(card: Card, modifier: Modifier = Modifier) {
         CardStatus.PAID -> StatusPaid
         CardStatus.DUE -> StatusDue
         CardStatus.SOON -> StatusSoon
+        CardStatus.OVERDUE -> Color.Red // Dedicated color for overdue
     }
     
     val statusText = when (card.status) {
@@ -36,6 +37,7 @@ fun CardStatusSection(card: Card, modifier: Modifier = Modifier) {
         }
         CardStatus.DUE -> "Status: Due in ${card.daysUntilDue} days"
         CardStatus.SOON -> "Status: Due soon (within ${card.daysUntilDue} days)"
+        CardStatus.OVERDUE -> "Status: OVERDUE by ${-card.daysUntilDue} days"
     }
 
     Text(
@@ -60,8 +62,8 @@ fun CardStatusSectionPreview() {
                     bankName = "HDFC",
                     cardName = "Regalia",
                     lastFourDigits = "1234",
-                    statementDate = 10,
-                    dueDate = 28,
+                    statementDay = 10,
+                    dueDay = 28,
                     status = CardStatus.PAID,
                     minimumDueLastCycle = false,
                     daysUntilDue = 18,
@@ -74,8 +76,8 @@ fun CardStatusSectionPreview() {
                     bankName = "SBI",
                     cardName = "Cashback",
                     lastFourDigits = "9012",
-                    statementDate = 22,
-                    dueDate = 11,
+                    statementDay = 22,
+                    dueDay = 11,
                     status = CardStatus.SOON,
                     minimumDueLastCycle = false,
                     daysUntilDue = 1

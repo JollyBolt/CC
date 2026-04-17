@@ -139,31 +139,15 @@ Each screen has a dedicated ViewModel. The ViewModel holds the UI state as a `St
 | `HistoryViewModel` | Payment graph data aggregation |
 | `SettingsViewModel` | Data export, deletion |
 
-**Due Date Auto-Calculation (AddCardViewModel):**
+**Target Due Date Selection (AddCardViewModel):**
 ```
-User selects Bank + Statement Date
+User selects Bank + Statement Day + Due Day
          │
          ▼
-ViewModel looks up BankDueDateConfig (local bundled map)
+ViewModel validates: fields provided, in range 1-31
          │
          ▼
-DueDate = StatementDate + bank.dueDateGapDays
-         │
-         ▼
-Displayed to user before saving ("Your due date will be the 15th")
-```
-
-**Bank due date gap map (bundled locally, never fetched from network):**
-```kotlin
-val bankDueDateGapDays = mapOf(
-    "HDFC"          to 18,
-    "SBI"           to 15,
-    "ICICI"         to 18,
-    "Axis"          to 15,
-    "Kotak"         to 15,
-    "American Express" to 21,
-    // ... all supported banks
-)
+Displayed to user for confirmation
 ```
 
 ---
@@ -218,7 +202,7 @@ Room is the offline-first local database. Every piece of app data lives here fir
 │ nickname     │ String                                │
 │ lastFourDigits│ String                               │
 │ statementDay │ Int (1–31)                            │
-│ dueDateDay   │ Int (calculated, stored for display)  │
+│ dueDay       │ Int (1-31)                            │
 │ status       │ Enum: PAID, PENDING, DUE_SOON, OVERDUE│
 │ createdAt    │ Long (epoch ms)                       │
 │ updatedAt    │ Long (epoch ms)                       │
@@ -346,7 +330,7 @@ Repository saves card to Room
          │
          ▼
 WorkManager schedules all 4 workers for next cycle
-  using card's statementDay and dueDateDay
+  using card's statementDay and dueDay
          │
          ▼
 Workers fire at correct times, update Room

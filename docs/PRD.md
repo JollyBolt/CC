@@ -33,9 +33,9 @@ To provide a lightweight tool that offers **100% confidence in credit card payme
 
 ### 5.1 Zero-Permission Card Vault
 
-- **Minimal Data Collection:** Collects ONLY — Bank Name (selected from a curated list), Card Nickname, Last 4 Digits, and Statement Date.
-- **Auto Due Date Calculation:** Each bank has a publicly known, fixed gap between the Statement Date and the Due Date (e.g., HDFC = 18 days, SBI = 15 days). This mapping is bundled locally within the app. The Due Date is calculated automatically — the user never has to enter it.
-- **Bank Selection:** Users pick their bank from a pre-populated list. Bank logos and statement-to-due-date gap values are bundled locally. No IIN lookup, no network calls for card identification.
+- **Manual Date Entry:** Collects ONLY — Bank Name (selected from a curated list), Card Nickname, Last 4 Digits, Statement Date, and Due Date.
+- **Cycle Calculation:** The app uses the provided Statement Date and Due Date to manage the billing cycle. If the Due Date day is numerically less than the Statement Date day, the system automatically identifies it as a cross-month cycle (Due Date in the following month).
+- **Bank Selection:** Users pick their bank from a pre-populated list. Bank logos are bundled locally. No IIN lookup, no network calls for card identification.
 
 ### 5.2 The "Loop-Killer" Workflow
 

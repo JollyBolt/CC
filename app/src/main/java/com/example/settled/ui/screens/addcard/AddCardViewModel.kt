@@ -37,9 +37,13 @@ class AddCardViewModel @Inject constructor(
                 val filtered = event.value.filter { it.isDigit() }.take(4)
                 _uiState.update { it.copy(lastFour = filtered, error = null) }
             }
-            is AddCardEvent.StatementDateChanged -> {
+            is AddCardEvent.StatementDayChanged -> {
                 val filtered = event.value.filter { it.isDigit() }.take(2)
-                _uiState.update { it.copy(statementDate = filtered, error = null) }
+                _uiState.update { it.copy(statementDay = filtered, error = null) }
+            }
+            is AddCardEvent.DueDayChanged -> {
+                val filtered = event.value.filter { it.isDigit() }.take(2)
+                _uiState.update { it.copy(dueDay = filtered, error = null) }
             }
             AddCardEvent.SubmitCard -> saveCard()
         }
@@ -47,10 +51,13 @@ class AddCardViewModel @Inject constructor(
 
     private fun saveCard() {
         val state = _uiState.value
-        val date = state.statementDate.toIntOrNull()
+        val statementDay = state.statementDay.toIntOrNull()
+        val dueDay = state.dueDay.toIntOrNull()
         
-        if (state.lastFour.length != 4 || date == null || date !in 1..31) {
-            viewModelScope.launch { _uiEvent.send(AddCardUiEvent.ShowError("Invalid details: Ensure last 4 digits and valid date.")) }
+        if (state.lastFour.length != 4 || 
+            statementDay == null || statementDay !in 1..31 || 
+            dueDay == null || dueDay !in 1..31) {
+            viewModelScope.launch { _uiEvent.send(AddCardUiEvent.ShowError("Invalid details: Ensure last 4 digits and valid days (1-31).")) }
             return
         }
         
@@ -61,7 +68,8 @@ class AddCardViewModel @Inject constructor(
                 bankName = state.bankName,
                 cardName = state.cardName,
                 lastFourDigits = state.lastFour,
-                statementDate = date
+                statementDay = statementDay,
+                dueDay = dueDay
             )
             
             when (result) {

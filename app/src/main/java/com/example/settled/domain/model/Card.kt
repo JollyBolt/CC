@@ -5,8 +5,8 @@ data class Card(
     val bankName: String,
     val cardName: String,
     val lastFourDigits: String,
-    val statementDate: Int,
-    val dueDate: Int, // E.g., statementDate + 20 days
+    val statementDay: Int,
+    val dueDay: Int,
     val status: CardStatus,
     val minimumDueLastCycle: Boolean, // True if the last valid log was of type MINIMUM
     val daysUntilDue: Int,

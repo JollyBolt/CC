@@ -7,19 +7,21 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.background
 import com.example.settled.domain.model.SupportedCardsRegistry
+import com.example.settled.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +41,7 @@ fun BankSelectionScreen(
                 title = { Text("Select Bank") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -67,40 +69,47 @@ fun BankSelectionScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f)
+                            .height(100.dp)
                             .clickable {
                                 viewModel.onEvent(AddCardEvent.BankSelected(bank))
                                 onNavigateNext()
                             },
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                        shape = RoundedCornerShape(16.dp)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            // Dummy Logo Image Placeholder
-                            Box(
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.Home, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            val logoRes = when {
+                                bank.contains("HDFC", ignoreCase = true) -> R.drawable.logo_bank_hdfc_horiz
+                                bank.contains("ICICI", ignoreCase = true) -> R.drawable.logo_bank_icici_horiz
+                                bank.contains("SBI", ignoreCase = true) -> R.drawable.logo_bank_sbi_horiz
+                                bank.contains("Axis", ignoreCase = true) -> R.drawable.logo_bank_axis_horiz
+                                bank.contains("Kotak", ignoreCase = true) -> R.drawable.logo_bank_kotak_horiz
+                                bank.contains("HSBC", ignoreCase = true) -> R.drawable.logo_bank_hsbc_horiz
+                                bank.contains("YES", ignoreCase = true) -> R.drawable.logo_bank_yes_horiz
+                                bank.contains("RBL", ignoreCase = true) -> R.drawable.logo_bank_rbl_horiz
+                                bank.contains("AMEX", ignoreCase = true) || bank.contains("American Express", ignoreCase = true) -> R.drawable.logo_bank_amex_horiz
+                                else -> null
                             }
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
-                            Text(
-                                text = bank,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+
+                            if (logoRes != null) {
+                                Image(
+                                    painter = painterResource(id = logoRes),
+                                    contentDescription = bank,
+                                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+                            } else {
+                                Text(
+                                    text = bank,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
                     }
                 }

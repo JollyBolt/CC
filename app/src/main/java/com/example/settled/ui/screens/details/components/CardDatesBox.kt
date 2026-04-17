@@ -44,7 +44,7 @@ fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Oct ${card.statementDate}, 2026", 
+                    text = "${card.statementDay}, 2026", 
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Black,
                     color = Color(0xFF2E333D),
@@ -71,7 +71,7 @@ fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Nov ${card.dueDate}, 2026", 
+                    text = "${card.dueDay}, 2026", 
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Black,
                     color = Color(0xFF2E333D),
@@ -94,8 +94,8 @@ fun CardDatesBoxPreview() {
                     bankName = "HDFC",
                     cardName = "Regalia",
                     lastFourDigits = "1234",
-                    statementDate = 10,
-                    dueDate = 28,
+                    statementDay = 10,
+                    dueDay = 28,
                     status = CardStatus.PAID,
                     minimumDueLastCycle = false,
                     daysUntilDue = 18

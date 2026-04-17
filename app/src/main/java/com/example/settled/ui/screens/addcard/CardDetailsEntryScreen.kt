@@ -3,12 +3,12 @@ package com.example.settled.ui.screens.addcard
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -41,7 +41,7 @@ fun CardDetailsEntryScreen(
                 title = { Text("Details Entry") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -64,12 +64,30 @@ fun CardDetailsEntryScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             OutlinedTextField(
-                value = uiState.statementDate,
-                onValueChange = { viewModel.onEvent(AddCardEvent.StatementDateChanged(it)) },
+                value = uiState.statementDay,
+                onValueChange = { viewModel.onEvent(AddCardEvent.StatementDayChanged(it)) },
                 label = { Text("Statement Date (1-31)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            OutlinedTextField(
+                value = uiState.dueDay,
+                onValueChange = { viewModel.onEvent(AddCardEvent.DueDayChanged(it)) },
+                label = { Text("Due Date (1-31)") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "Tip: If Due Date is before Statement Date, it will fall in the 다음 month.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
             
             if (uiState.error != null) {
@@ -79,7 +97,10 @@ fun CardDetailsEntryScreen(
             
             Spacer(modifier = Modifier.weight(1f))
             
-            val isEnabled = uiState.lastFour.length == 4 && uiState.statementDate.isNotBlank() && !uiState.isSaving
+            val isEnabled = uiState.lastFour.length == 4 && 
+                            uiState.statementDay.isNotBlank() && 
+                            uiState.dueDay.isNotBlank() && 
+                            !uiState.isSaving
             
             Button(
                 onClick = { viewModel.onEvent(AddCardEvent.SubmitCard) },

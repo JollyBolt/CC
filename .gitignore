@@ -30,3 +30,13 @@ logs/
 captures/
 .externalNativeBuild/
 .cxx/
+# Added by code-review-graph
+.code-review-graph/
+
+# AI Tools
+.claude/
+.cursor/
+.mcp.json
+.opencode.json
+.windsurfrules
+.cursorrules
