@@ -204,7 +204,7 @@ fun CardVisualPreview() {
                     lastFourDigits = "9012",
                     statementDay = 22,
                     dueDay = 10,
-                    status = CardStatus.SOON,
+                    status = CardStatus.DUE,
                     minimumDueLastCycle = false,
                     daysUntilDue = 0
                 )

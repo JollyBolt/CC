@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Shield
@@ -14,11 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +45,8 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val density = LocalDensity.current
+    var contentHeightPx by remember { mutableIntStateOf(Int.MAX_VALUE) }
 
     LaunchedEffect(viewModel.uiEvent, lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -63,40 +69,53 @@ fun HomeScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
             is HomeUiState.Success -> {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(bottom = 24.dp)
-                    ) {
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    val viewportHeightPx = constraints.maxHeight
+
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
                         item {
-                            MetricsDashboard(cards = state.cards, viewModel = viewModel)
-                        }
-                        
-                        item {
-                            Text(
-                                text = "Your Active Cards (${state.cards.size})",
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.ExtraBold,
-                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                                color = Color(0xFF1A1C1E)
-                            )
-                        }
-                        
-                        if (state.cards.isNotEmpty()) {
-                            items(state.cards) { card ->
-                                CardListItem(
-                                    card = card,
-                                    onClick = { onNavigateToDetails(card.id) }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .onSizeChanged { contentHeightPx = it.height }
+                            ) {
+                                MetricsDashboard(cards = state.cards, viewModel = viewModel)
+
+                                Text(
+                                    text = "Your Active Cards (${state.cards.size})",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+                                    color = Color(0xFF1A1C1E)
                                 )
+
+                                if (state.cards.isNotEmpty()) {
+                                    state.cards.forEach { card ->
+                                        CardListItem(
+                                            card = card,
+                                            onClick = { onNavigateToDetails(card.id) }
+                                        )
+                                    }
+                                } else {
+                                    EmptyState()
+                                }
                             }
-                        } else {
-                            item {
-                                EmptyState()
+                        }
+
+                        item {
+                            val remainingHeight = with(density) {
+                                (viewportHeightPx - contentHeightPx).coerceAtLeast(0).toDp()
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .defaultMinSize(minHeight = remainingHeight),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                PrivacyFooter()
                             }
                         }
                     }
-                    
-                    PrivacyFooter()
                 }
 
                 if (state.showPaywall) {
@@ -127,8 +146,8 @@ fun HomeScreen(
 @Composable
 fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
     val paidCount = cards.count { it.status == CardStatus.PAID }
-    val soonCount = cards.count { it.status == CardStatus.SOON }
-    val dueCount = cards.count { it.status != CardStatus.PAID } // All unpaid are technically 'Due'
+    val dueCount = cards.count { it.status == CardStatus.DUE }
+    val overdueCount = cards.count { it.status == CardStatus.OVERDUE }
 
     Column(
         modifier = Modifier
@@ -160,7 +179,7 @@ fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
         ) {
             MetricCard(modifier = Modifier.weight(1f), label = "PAID", value = paidCount.toString(), color = StatusPaid)
             MetricCard(modifier = Modifier.weight(1f), label = "DUE", value = dueCount.toString(), color = StatusDue)
-            MetricCard(modifier = Modifier.weight(1f), label = "DUE SOON", value = soonCount.toString(), color = StatusSoon)
+            MetricCard(modifier = Modifier.weight(1f), label = "OVERDUE", value = overdueCount.toString(), color = StatusOverdue)
         }
     }
 }

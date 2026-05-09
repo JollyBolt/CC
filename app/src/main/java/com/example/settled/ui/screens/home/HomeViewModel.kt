@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
         cardRepository.getAllCards().onEach { result ->
             when (result) {
                 is Result.Success -> {
-                    // Sort order: SOON -> DUE -> PAID
+                    // Sort order: OVERDUE -> DUE -> PAID
                     val sortedCards = result.data.sortedWith(
                         compareBy<Card> { it.status.ordinal }
                             .thenBy { it.daysUntilDue }

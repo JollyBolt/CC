@@ -45,27 +45,22 @@ fun CardListItem(
     modifier: Modifier = Modifier
 ) {
     val statusColor = when (card.status) {
-        CardStatus.SOON -> StatusSoon
         CardStatus.DUE -> StatusDue
         CardStatus.PAID -> StatusPaid
-        CardStatus.OVERDUE -> Color.Red
+        CardStatus.OVERDUE -> StatusOverdue
     }
-    
+
     val statusText = when (card.status) {
         CardStatus.PAID -> {
-            val date = card.lastPaymentInfo?.timestamp?.let { 
+            val date = card.lastPaymentInfo?.timestamp?.let {
                 SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(it))
             } ?: "today"
             "Status: Paid on $date via ${card.lastPaymentInfo?.platform ?: "CRED"}"
         }
-        CardStatus.DUE -> "Status: Due in ${card.daysUntilDue} days"
-        CardStatus.SOON -> {
-            val daysStr = when {
-                card.daysUntilDue > 1 -> "${card.daysUntilDue} days"
-                card.daysUntilDue == 1 -> "1 day"
-                else -> "today"
-            }
-            "Status: Due $daysStr"
+        CardStatus.DUE -> when {
+            card.daysUntilDue > 1 -> "Status: Due in ${card.daysUntilDue} days"
+            card.daysUntilDue == 1 -> "Status: Due in 1 day"
+            else -> "Status: Due today"
         }
         CardStatus.OVERDUE -> "Status: OVERDUE"
     }
@@ -230,9 +225,9 @@ fun CardListItemPreview() {
                     lastFourDigits = "9012",
                     statementDay = 22,
                     dueDay = 11,
-                    status = CardStatus.SOON,
+                    status = CardStatus.OVERDUE,
                     minimumDueLastCycle = false,
-                    daysUntilDue = 0
+                    daysUntilDue = -5
                 ),
                 onClick = {}
             )

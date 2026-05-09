@@ -5,7 +5,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,19 +23,21 @@ fun CardStatusSection(card: Card, modifier: Modifier = Modifier) {
     val statusColor = when (card.status) {
         CardStatus.PAID -> StatusPaid
         CardStatus.DUE -> StatusDue
-        CardStatus.SOON -> StatusSoon
-        CardStatus.OVERDUE -> Color.Red // Dedicated color for overdue
+        CardStatus.OVERDUE -> StatusOverdue
     }
-    
+
     val statusText = when (card.status) {
         CardStatus.PAID -> {
-            val date = card.lastPaymentInfo?.timestamp?.let { 
+            val date = card.lastPaymentInfo?.timestamp?.let {
                 SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(it))
             } ?: "today"
             "Status: Paid on $date via ${card.lastPaymentInfo?.platform ?: "CRED"}"
         }
-        CardStatus.DUE -> "Status: Due in ${card.daysUntilDue} days"
-        CardStatus.SOON -> "Status: Due soon (within ${card.daysUntilDue} days)"
+        CardStatus.DUE -> when {
+            card.daysUntilDue > 1 -> "Status: Due in ${card.daysUntilDue} days"
+            card.daysUntilDue == 1 -> "Status: Due in 1 day"
+            else -> "Status: Due today"
+        }
         CardStatus.OVERDUE -> "Status: OVERDUE by ${-card.daysUntilDue} days"
     }
 
@@ -78,9 +79,9 @@ fun CardStatusSectionPreview() {
                     lastFourDigits = "9012",
                     statementDay = 22,
                     dueDay = 11,
-                    status = CardStatus.SOON,
+                    status = CardStatus.OVERDUE,
                     minimumDueLastCycle = false,
-                    daysUntilDue = 1
+                    daysUntilDue = -3
                 )
             )
         }

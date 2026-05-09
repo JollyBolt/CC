@@ -68,14 +68,10 @@ class CardRepositoryImpl @Inject constructor(
         
         val status = if (latestLog != null) {
             CardStatus.PAID
+        } else if (now.isAfter(activeDueDate)) {
+            CardStatus.OVERDUE
         } else {
-            if (now.isAfter(activeDueDate)) {
-                CardStatus.OVERDUE
-            } else if (daysUntilDue <= 2) {
-                CardStatus.SOON
-            } else {
-                CardStatus.DUE
-            }
+            CardStatus.DUE
         }
         
         val minimumDue = latestLog?.type == "MINIMUM"
@@ -110,7 +106,7 @@ class CardRepositoryImpl @Inject constructor(
         return combine(cardDao.getAllCards(), cardDao.getAllPaymentLogs()) { entities, logs ->
             try {
                 val domainCards = entities.map { entity -> calculateStatus(entity, logs) }
-                // Dynamic sorting: SOON forms cluster top, then nearest due date.
+                // Dynamic sorting: OVERDUE first, then DUE by nearest due date, then PAID.
                 val sortedCards = domainCards.sortedWith(
                     compareBy<Card> { it.status.ordinal }.thenBy { it.daysUntilDue }
                 )

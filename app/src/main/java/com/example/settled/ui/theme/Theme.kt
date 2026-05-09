@@ -21,7 +21,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = TextPrimaryLight,
     onSurface = TextPrimaryLight,
     onSurfaceVariant = TextSecondaryLight,
-    error = StatusSoon,
+    error = StatusOverdue,
     onError = Color.White
 )
 
