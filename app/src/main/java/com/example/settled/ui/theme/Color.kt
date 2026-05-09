@@ -18,7 +18,7 @@ val TertiaryBrand = Color(0xFFBD1532)
 
 // semantic colors
 val StatusPaid = Color(0xFF2E7D32)
-val StatusDue = Color(0xFFFBC02D)
+val StatusDue = Color(0xFFCC8800)
 val StatusOverdue = Color(0xFFB71C1C)
 
 val TextPrimaryDark = Color(0xFFFFFFFF)
