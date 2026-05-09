@@ -5,11 +5,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.settled.R
 import com.example.settled.domain.model.Card
 import com.example.settled.domain.model.CardStatus
 import com.example.settled.domain.model.PaymentLog
@@ -30,15 +32,15 @@ fun CardStatusSection(card: Card, modifier: Modifier = Modifier) {
         CardStatus.PAID -> {
             val date = card.lastPaymentInfo?.timestamp?.let {
                 SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(it))
-            } ?: "today"
-            "Status: Paid on $date via ${card.lastPaymentInfo?.platform ?: "CRED"}"
+            } ?: stringResource(R.string.date_fallback_today)
+            stringResource(R.string.status_paid, date, card.lastPaymentInfo?.platform ?: "CRED")
         }
         CardStatus.DUE -> when {
-            card.daysUntilDue > 1 -> "Status: Due in ${card.daysUntilDue} days"
-            card.daysUntilDue == 1 -> "Status: Due in 1 day"
-            else -> "Status: Due today"
+            card.daysUntilDue > 1 -> stringResource(R.string.status_due_days, card.daysUntilDue)
+            card.daysUntilDue == 1 -> stringResource(R.string.status_due_one_day)
+            else -> stringResource(R.string.status_due_today)
         }
-        CardStatus.OVERDUE -> "Status: OVERDUE by ${-card.daysUntilDue} days"
+        CardStatus.OVERDUE -> stringResource(R.string.status_overdue_days, -card.daysUntilDue)
     }
 
     Text(

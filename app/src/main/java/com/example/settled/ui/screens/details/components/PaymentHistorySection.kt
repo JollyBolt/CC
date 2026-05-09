@@ -8,8 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.settled.R
 import com.example.settled.domain.model.PaymentLog
 import com.example.settled.ui.theme.SettledTheme
 
@@ -20,7 +22,7 @@ fun PaymentHistorySection(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Payment History",
+            text = stringResource(R.string.payment_history_title),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 24.dp),
             color = MaterialTheme.colorScheme.onBackground
@@ -35,7 +37,7 @@ fun PaymentHistorySection(
                     .padding(vertical = 48.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No payment history yet.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.payment_history_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         } else {
             // Note: In a real app, this should probably be part of a larger LazyColumn

@@ -14,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.settled.R
 import com.example.settled.ui.theme.LightBackground
 import com.example.settled.ui.theme.PrimaryBrand
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +32,7 @@ fun SettingsScreen() {
             .background(LightBackground)
     ) {
         TopAppBar(
-            title = { Text("Settings", fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.Bold) },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
         )
 
@@ -44,23 +46,23 @@ fun SettingsScreen() {
             }
 
             item {
-                SettingsSection(title = "Account") {
-                    SettingsItem(icon = Icons.Default.Person, label = "Profile", onClick = {})
-                    SettingsItem(icon = Icons.Default.CloudSync, label = "Cloud Sync", onClick = {})
+                SettingsSection(title = stringResource(R.string.settings_section_account)) {
+                    SettingsItem(icon = Icons.Default.Person, label = stringResource(R.string.settings_item_profile), onClick = {})
+                    SettingsItem(icon = Icons.Default.CloudSync, label = stringResource(R.string.settings_item_cloud_sync), onClick = {})
                 }
             }
 
             item {
-                SettingsSection(title = "Data Management") {
-                    SettingsItem(icon = Icons.Default.FileDownload, label = "Export as CSV", onClick = {})
-                    SettingsItem(icon = Icons.Default.DeleteForever, label = "Delete Account", color = Color.Red, onClick = {})
+                SettingsSection(title = stringResource(R.string.settings_section_data)) {
+                    SettingsItem(icon = Icons.Default.FileDownload, label = stringResource(R.string.settings_item_export_csv), onClick = {})
+                    SettingsItem(icon = Icons.Default.DeleteForever, label = stringResource(R.string.settings_item_delete_account), color = Color.Red, onClick = {})
                 }
             }
 
             item {
-                SettingsSection(title = "General") {
-                    SettingsItem(icon = Icons.Default.Notifications, label = "Notifications", onClick = {})
-                    SettingsItem(icon = Icons.Default.Info, label = "About Settled", onClick = {})
+                SettingsSection(title = stringResource(R.string.settings_section_general)) {
+                    SettingsItem(icon = Icons.Default.Notifications, label = stringResource(R.string.settings_item_notifications), onClick = {})
+                    SettingsItem(icon = Icons.Default.Info, label = stringResource(R.string.settings_item_about), onClick = {})
                 }
             }
         }
@@ -80,15 +82,15 @@ fun ProBanner() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Settled Pro", color = Color.White, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-                Text("Unlock unlimited cards, cloud sync and more.", color = Color.White.copy(alpha = 0.7f), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.settings_pro_title), color = Color.White, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.settings_pro_body), color = Color.White.copy(alpha = 0.7f), style = MaterialTheme.typography.bodyMedium)
             }
             Button(
                 onClick = {},
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryBrand),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Upgrade")
+                Text(stringResource(R.string.settings_pro_upgrade))
             }
         }
     }

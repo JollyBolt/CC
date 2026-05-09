@@ -12,8 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.settled.R
 import com.example.settled.domain.model.SupportedCardsRegistry
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,17 +32,17 @@ fun CardSelectionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Select Card") },
+                title = { Text(stringResource(R.string.card_selection_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 }
             )
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp)) {
-            Text("Cards by $bankName", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.card_selection_cards_by, bankName), style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
@@ -51,7 +53,7 @@ fun CardSelectionScreen(
                     ListItem(
                         headlineContent = { Text(card, fontWeight = FontWeight.Medium) },
                         leadingContent = {
-                            Icon(Icons.Default.Add, contentDescription = "Card", tint = MaterialTheme.colorScheme.secondary)
+                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.cd_card), tint = MaterialTheme.colorScheme.secondary)
                         },
                         modifier = Modifier.clickable {
                             viewModel.onEvent(AddCardEvent.CardSelected(card))

@@ -20,9 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.settled.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -69,18 +71,18 @@ fun CardDetailsScreen(
                     if (uiState is CardDetailsUiState.Success) {
                         Text((uiState as CardDetailsUiState.Success).card.bankName, fontWeight = FontWeight.Bold) 
                     } else {
-                        Text("Loading...")
+                        Text(stringResource(R.string.card_details_loading))
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
                 actions = {
                     if (uiState is CardDetailsUiState.Success) {
                         IconButton(onClick = { viewModel.onEvent(CardDetailsEvent.DeleteCardClicked) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete Card")
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.cd_delete_card))
                         }
                     }
                 },
@@ -96,7 +98,7 @@ fun CardDetailsScreen(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Text("Record Payment", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.card_details_record_payment), fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -112,7 +114,7 @@ fun CardDetailsScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 is CardDetailsUiState.Error -> {
-                    Text(state.message ?: "Unknown error", color = MaterialTheme.colorScheme.error, modifier = Modifier.align(Alignment.Center))
+                    Text(state.message ?: stringResource(R.string.card_details_error_unknown), color = MaterialTheme.colorScheme.error, modifier = Modifier.align(Alignment.Center))
                 }
                 is CardDetailsUiState.Success -> {
                     LazyColumn(
@@ -159,9 +161,9 @@ fun CardDetailsScreen(
                     if (state.showDeleteConfirmation) {
                         AlertDialog(
                             onDismissRequest = { viewModel.onEvent(CardDetailsEvent.DismissDeleteConfirmation) },
-                            title = { Text("Delete Card?") },
-                            text = { 
-                                Text("Are you sure you want to remove ${state.card.cardName}? This action cannot be undone.") 
+                            title = { Text(stringResource(R.string.delete_dialog_title)) },
+                            text = {
+                                Text(stringResource(R.string.delete_dialog_body, state.card.cardName))
                             },
                             confirmButton = {
                                 Button(
@@ -171,13 +173,13 @@ fun CardDetailsScreen(
                                     if (state.isDeletingCard) {
                                         CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onError)
                                     } else {
-                                        Text("Delete", color = MaterialTheme.colorScheme.onError)
+                                        Text(stringResource(R.string.delete_dialog_confirm), color = MaterialTheme.colorScheme.onError)
                                     }
                                 }
                             },
                             dismissButton = {
                                 TextButton(onClick = { viewModel.onEvent(CardDetailsEvent.DismissDeleteConfirmation) }) {
-                                    Text("Cancel")
+                                    Text(stringResource(R.string.action_cancel))
                                 }
                             }
                         )

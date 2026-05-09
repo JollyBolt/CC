@@ -8,9 +8,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.settled.R
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 
@@ -38,24 +40,24 @@ fun CardDetailsEntryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Details Entry") },
+                title = { Text(stringResource(R.string.card_entry_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 }
             )
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize().padding(24.dp)) {
-            Text("Saving details for ${uiState.bankName} ${uiState.cardName}", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.card_entry_saving_for, uiState.bankName, uiState.cardName), style = MaterialTheme.typography.titleMedium)
             
             Spacer(modifier = Modifier.height(24.dp))
             
             OutlinedTextField(
                 value = uiState.lastFour,
                 onValueChange = { viewModel.onEvent(AddCardEvent.LastFourChanged(it)) },
-                label = { Text("Last 4 digits") },
+                label = { Text(stringResource(R.string.card_entry_last_four)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -66,7 +68,7 @@ fun CardDetailsEntryScreen(
             OutlinedTextField(
                 value = uiState.statementDay,
                 onValueChange = { viewModel.onEvent(AddCardEvent.StatementDayChanged(it)) },
-                label = { Text("Statement Date (1-31)") },
+                label = { Text(stringResource(R.string.card_entry_statement_date)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -77,7 +79,7 @@ fun CardDetailsEntryScreen(
             OutlinedTextField(
                 value = uiState.dueDay,
                 onValueChange = { viewModel.onEvent(AddCardEvent.DueDayChanged(it)) },
-                label = { Text("Due Date (1-31)") },
+                label = { Text(stringResource(R.string.card_entry_due_date)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -85,7 +87,7 @@ fun CardDetailsEntryScreen(
             
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "Tip: If Due Date is before Statement Date, it will fall in the 다음 month.",
+                stringResource(R.string.card_entry_due_tip),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
@@ -110,7 +112,7 @@ fun CardDetailsEntryScreen(
                 if (uiState.isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                 } else {
-                    Text("Save Card securely")
+                    Text(stringResource(R.string.card_entry_save))
                 }
             }
         }

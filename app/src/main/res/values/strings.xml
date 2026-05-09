@@ -1,3 +1,102 @@
 <resources>
     <string name="app_name">Settled</string>
+
+    <!-- Status -->
+    <string name="status_paid">Status: Paid on %1$s via %2$s</string>
+    <string name="status_due_days">Status: Due in %1$d days</string>
+    <string name="status_due_one_day">Status: Due in 1 day</string>
+    <string name="status_due_today">Status: Due today</string>
+    <string name="status_overdue">Status: OVERDUE</string>
+    <string name="status_overdue_days">Status: OVERDUE by %1$d days</string>
+    <string name="date_fallback_today">today</string>
+
+    <!-- Home screen -->
+    <string name="home_active_cards">Your Active Cards (%1$d)</string>
+    <string name="home_account_overview">ACCOUNT OVERVIEW</string>
+    <string name="home_seed_data">Seed Data</string>
+    <string name="metric_paid">PAID</string>
+    <string name="metric_due">DUE</string>
+    <string name="metric_overdue">OVERDUE</string>
+    <string name="home_privacy_title">Privacy First</string>
+    <string name="home_privacy_body">Your messages and emails are never tracked. Your data stays with you.</string>
+    <string name="home_empty_state">Add your first card to start monitoring</string>
+    <string name="home_error_loading">Error loading cards.</string>
+    <string name="paywall_title">Upgrade to Pro</string>
+    <string name="paywall_body">You\'ve reached the 3-card limit on the free plan. Upgrade to track unlimited cards!</string>
+    <string name="paywall_subscribe">Subscribe Now</string>
+    <string name="paywall_dismiss">Not now</string>
+
+    <!-- Payment history -->
+    <string name="payment_history_title">Payment History</string>
+    <string name="payment_history_empty">No payment history yet.</string>
+    <string name="payment_via_platform">Via %1$s</string>
+
+    <!-- Card dates -->
+    <string name="card_dates_statement">STATEMENT DATE</string>
+    <string name="card_dates_due">DUE DATE</string>
+
+    <!-- Card details screen -->
+    <string name="card_details_loading">Loading…</string>
+    <string name="card_details_record_payment">Record Payment</string>
+    <string name="card_details_error_unknown">Unknown error</string>
+    <string name="delete_dialog_title">Delete Card?</string>
+    <string name="delete_dialog_body">Are you sure you want to remove %1$s? This action cannot be undone.</string>
+    <string name="delete_dialog_confirm">Delete</string>
+
+    <!-- Payment bottom sheet -->
+    <string name="payment_section_type">PAYMENT TYPE</string>
+    <string name="payment_section_platform">PAYMENT PLATFORM</string>
+    <string name="payment_section_date">DATE OF PAYMENT</string>
+    <string name="payment_type_full">Full Payment</string>
+    <string name="payment_type_minimum">Minimum Due</string>
+    <string name="payment_change_date">CHANGE</string>
+    <string name="payment_confirm">Confirm Payment</string>
+    <string name="date_today">Today</string>
+
+    <!-- Add card flow -->
+    <string name="bank_selection_title">Select Bank</string>
+    <string name="bank_search_placeholder">Search specific banks</string>
+    <string name="card_selection_title">Select Card</string>
+    <string name="card_selection_cards_by">Cards by %1$s</string>
+    <string name="card_entry_title">Details Entry</string>
+    <string name="card_entry_saving_for">Saving details for %1$s %2$s</string>
+    <string name="card_entry_last_four">Last 4 digits</string>
+    <string name="card_entry_statement_date">Statement Date (1-31)</string>
+    <string name="card_entry_due_date">Due Date (1-31)</string>
+    <string name="card_entry_due_tip">Tip: If Due Date is before Statement Date, it will fall in the next month.</string>
+    <string name="card_entry_save">Save Card securely</string>
+    <string name="add_card_success_title">Card Setup Complete!</string>
+    <string name="add_card_success_body">Your card is actively vaulted on device. You can track dates without risk.</string>
+    <string name="add_card_done">Done</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_account">Account</string>
+    <string name="settings_item_profile">Profile</string>
+    <string name="settings_item_cloud_sync">Cloud Sync</string>
+    <string name="settings_section_data">Data Management</string>
+    <string name="settings_item_export_csv">Export as CSV</string>
+    <string name="settings_item_delete_account">Delete Account</string>
+    <string name="settings_section_general">General</string>
+    <string name="settings_item_notifications">Notifications</string>
+    <string name="settings_item_about">About Settled</string>
+    <string name="settings_pro_title">Settled Pro</string>
+    <string name="settings_pro_body">Unlock unlimited cards, cloud sync and more.</string>
+    <string name="settings_pro_upgrade">Upgrade</string>
+
+    <!-- Navigation bar -->
+    <string name="nav_dashboard">DASHBOARD</string>
+    <string name="nav_add_card">ADD CARD</string>
+    <string name="nav_settings">SETTINGS</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_back">Back</string>
+    <string name="cd_delete_card">Delete Card</string>
+    <string name="cd_success">Success</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_card">Card</string>
+
+    <!-- Common actions -->
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
 </resources>

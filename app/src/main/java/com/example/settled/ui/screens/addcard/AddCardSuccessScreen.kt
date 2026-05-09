@@ -11,9 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.settled.R
 import com.example.settled.ui.theme.StatusPaid
 
 @Composable
@@ -36,7 +38,7 @@ fun AddCardSuccessScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = "Success",
+                contentDescription = stringResource(R.string.cd_success),
                 tint = Color.White,
                 modifier = Modifier.size(40.dp)
             )
@@ -45,7 +47,7 @@ fun AddCardSuccessScreen(
         Spacer(modifier = Modifier.height(24.dp))
         
         Text(
-            text = "Card Setup Complete!",
+            text = stringResource(R.string.add_card_success_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -54,7 +56,7 @@ fun AddCardSuccessScreen(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Your card is actively vaulted on device. You can track dates without risk.",
+            text = stringResource(R.string.add_card_success_body),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -66,7 +68,7 @@ fun AddCardSuccessScreen(
             onClick = onNavigateHome,
             modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
-            Text("Done", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.add_card_done), style = MaterialTheme.typography.titleMedium)
         }
     }
 }

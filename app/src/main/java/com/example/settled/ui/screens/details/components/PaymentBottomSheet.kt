@@ -20,11 +20,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import com.example.settled.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.settled.R
 import com.example.settled.ui.screens.details.CardDetailsEvent
 import com.example.settled.ui.screens.details.CardDetailsUiState
 import com.example.settled.ui.screens.details.CardDetailsViewModel
@@ -57,7 +58,8 @@ fun PaymentBottomSheet(
     val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
     val sheetContentHeight = screenHeightDp * 0.80f
 
-    val dateLabel = remember(selectedDate) {
+    val todayStr = stringResource(R.string.date_today)
+    val dateLabel = remember(selectedDate, todayStr) {
         val todayMidnight = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0);      set(Calendar.MILLISECOND, 0)
@@ -68,7 +70,7 @@ fun PaymentBottomSheet(
             set(Calendar.SECOND, 0);      set(Calendar.MILLISECOND, 0)
         }.timeInMillis
         if (chosenMidnight == todayMidnight)
-            "Today, " + SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(selectedDate))
+            "$todayStr, " + SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(selectedDate))
         else
             SimpleDateFormat("EEE, MMM dd, yyyy", Locale.getDefault()).format(Date(selectedDate))
     }
@@ -82,10 +84,10 @@ fun PaymentBottomSheet(
                 TextButton(onClick = {
                     pickerState.selectedDateMillis?.let { selectedDate = it }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.action_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         ) { DatePicker(state = pickerState) }
     }
@@ -118,7 +120,7 @@ fun PaymentBottomSheet(
 
             // ── Title ───────────────────────────────────────────────
             Text(
-                text = "Record Payment",
+                text = stringResource(R.string.card_details_record_payment),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -143,21 +145,21 @@ fun PaymentBottomSheet(
             Spacer(modifier = Modifier.height(28.dp))
 
             // ── Payment Type ─────────────────────────────────────────
-            SectionLabel("PAYMENT TYPE")
+            SectionLabel(stringResource(R.string.payment_section_type))
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 PaymentTypeChip(
-                    label = "Full Payment",
+                    label = stringResource(R.string.payment_type_full),
                     selected = selectedType == "FULL",
                     selectedColor = FullPaymentColor,
                     onClick = { selectedType = "FULL" },
                     modifier = Modifier.weight(1f)
                 )
                 PaymentTypeChip(
-                    label = "Minimum Due",
+                    label = stringResource(R.string.payment_type_minimum),
                     selected = selectedType == "MINIMUM",
                     selectedColor = MinimumDueColor,
                     onClick = { selectedType = "MINIMUM" },
@@ -168,7 +170,7 @@ fun PaymentBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             // ── Payment Platform ─────────────────────────────────────
-            SectionLabel("PAYMENT PLATFORM")
+            SectionLabel(stringResource(R.string.payment_section_platform))
             Spacer(modifier = Modifier.height(12.dp))
             
             val card = (uiState as? CardDetailsUiState.Success)?.card
@@ -233,7 +235,7 @@ fun PaymentBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             // ── Date of Payment ──────────────────────────────────────
-            SectionLabel("DATE OF PAYMENT")
+            SectionLabel(stringResource(R.string.payment_section_date))
             Spacer(modifier = Modifier.height(10.dp))
             Surface(
                 shape = RoundedCornerShape(14.dp),
@@ -265,7 +267,7 @@ fun PaymentBottomSheet(
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                     ) {
                         Text(
-                            "CHANGE",
+                            stringResource(R.string.payment_change_date),
                             color = PrimaryBrand,
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
@@ -304,7 +306,7 @@ fun PaymentBottomSheet(
                     )
                 } else {
                     Text(
-                        "Confirm Payment",
+                        stringResource(R.string.payment_confirm),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         color = Color.White
@@ -317,7 +319,7 @@ fun PaymentBottomSheet(
             // Cancel text link
             TextButton(onClick = onDismiss) {
                 Text(
-                    "Cancel",
+                    stringResource(R.string.action_cancel),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
                 )

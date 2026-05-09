@@ -23,10 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.settled.R
 import com.example.settled.ui.theme.SettledTheme
 
 @Composable
@@ -98,21 +100,21 @@ fun CustomBottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             verticalAlignment = Alignment.Bottom
         ) {
             BottomBarItem(
-                label = "DASHBOARD",
+                label = stringResource(R.string.nav_dashboard),
                 icon = Icons.Default.Dashboard,
                 isSelected = selectedTab == 0,
                 modifier = Modifier.weight(1f),
                 onClick = { onTabSelected(0) }
             )
             BottomBarItem(
-                label = "ADD CARD",
+                label = stringResource(R.string.nav_add_card),
                 icon = Icons.Default.Add,
                 isSelected = selectedTab == 1,
                 modifier = Modifier.weight(1f),
                 onClick = { onTabSelected(1) }
             )
             BottomBarItem(
-                label = "SETTINGS",
+                label = stringResource(R.string.nav_settings),
                 icon = Icons.Default.Settings,
                 isSelected = selectedTab == 2,
                 modifier = Modifier.weight(1f),

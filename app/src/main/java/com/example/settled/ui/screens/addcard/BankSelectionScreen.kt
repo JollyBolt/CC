@@ -17,11 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.settled.domain.model.SupportedCardsRegistry
 import com.example.settled.R
+import com.example.settled.domain.model.SupportedCardsRegistry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,10 +39,10 @@ fun BankSelectionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Select Bank") },
+                title = { Text(stringResource(R.string.bank_selection_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 }
             )
@@ -52,8 +53,8 @@ fun BankSelectionScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search specific banks") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                placeholder = { Text(stringResource(R.string.bank_search_placeholder)) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = stringResource(R.string.cd_search)) },
                 singleLine = true
             )
             

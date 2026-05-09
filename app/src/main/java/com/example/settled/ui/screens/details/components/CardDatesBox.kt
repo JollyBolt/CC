@@ -11,10 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.settled.R
 import com.example.settled.domain.model.Card
 import com.example.settled.domain.model.CardStatus
 import com.example.settled.ui.theme.SettledTheme
@@ -37,8 +39,8 @@ fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
             // Statement Date
             Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
                 Text(
-                    "STATEMENT DATE", 
-                    style = MaterialTheme.typography.labelSmall, 
+                    stringResource(R.string.card_dates_statement),
+                    style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold
                 )
@@ -63,8 +65,8 @@ fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
             Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
                 Spacer(modifier = Modifier.width(16.dp)) // Added some gap after divider
                 Text(
-                    "DUE DATE", 
-                    style = MaterialTheme.typography.labelSmall, 
+                    stringResource(R.string.card_dates_due),
+                    style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 16.dp)

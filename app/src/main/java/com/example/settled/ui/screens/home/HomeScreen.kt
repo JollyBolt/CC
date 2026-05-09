@@ -25,11 +25,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.settled.R
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.settled.domain.model.Card
@@ -82,7 +84,7 @@ fun HomeScreen(
                                 MetricsDashboard(cards = state.cards, viewModel = viewModel)
 
                                 Text(
-                                    text = "Your Active Cards (${state.cards.size})",
+                                    text = stringResource(R.string.home_active_cards, state.cards.size),
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.ExtraBold,
                                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
@@ -121,23 +123,23 @@ fun HomeScreen(
                 if (state.showPaywall) {
                     AlertDialog(
                         onDismissRequest = { viewModel.onEvent(HomeEvent.DismissPaywall) },
-                        title = { Text("Upgrade to Pro") },
-                        text = { Text("You've reached the 3-card limit on the free plan. Upgrade to track unlimited cards!") },
+                        title = { Text(stringResource(R.string.paywall_title)) },
+                        text = { Text(stringResource(R.string.paywall_body)) },
                         confirmButton = {
                             Button(onClick = { viewModel.onEvent(HomeEvent.DismissPaywall) }) {
-                                Text("Subscribe Now")
+                                Text(stringResource(R.string.paywall_subscribe))
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = { viewModel.onEvent(HomeEvent.DismissPaywall) }) {
-                                Text("Not now")
+                                Text(stringResource(R.string.paywall_dismiss))
                             }
                         }
                     )
                 }
             }
             is HomeUiState.Error -> {
-                Text("Error loading cards.", modifier = Modifier.align(Alignment.Center))
+                Text(stringResource(R.string.home_error_loading), modifier = Modifier.align(Alignment.Center))
             }
         }
     }
@@ -159,7 +161,7 @@ fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "ACCOUNT OVERVIEW",
+                text = stringResource(R.string.home_account_overview),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.Gray,
@@ -167,7 +169,7 @@ fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
                 modifier = Modifier.weight(1f)
             )
             TextButton(onClick = { viewModel.onEvent(HomeEvent.SeedTestData) }) {
-                Text("Seed Data", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.home_seed_data), style = MaterialTheme.typography.labelSmall)
             }
         }
         
@@ -177,9 +179,9 @@ fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            MetricCard(modifier = Modifier.weight(1f), label = "PAID", value = paidCount.toString(), color = StatusPaid)
-            MetricCard(modifier = Modifier.weight(1f), label = "DUE", value = dueCount.toString(), color = StatusDue)
-            MetricCard(modifier = Modifier.weight(1f), label = "OVERDUE", value = overdueCount.toString(), color = StatusOverdue)
+            MetricCard(modifier = Modifier.weight(1f), label = stringResource(R.string.metric_paid), value = paidCount.toString(), color = StatusPaid)
+            MetricCard(modifier = Modifier.weight(1f), label = stringResource(R.string.metric_due), value = dueCount.toString(), color = StatusDue)
+            MetricCard(modifier = Modifier.weight(1f), label = stringResource(R.string.metric_overdue), value = overdueCount.toString(), color = StatusOverdue)
         }
     }
 }
@@ -237,13 +239,13 @@ fun PrivacyFooter() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Privacy First",
+            text = stringResource(R.string.home_privacy_title),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.ExtraBold,
             color = Color.Gray
         )
         Text(
-            text = "Your messages and emails are never tracked. Your data stays with you.",
+            text = stringResource(R.string.home_privacy_body),
             style = MaterialTheme.typography.labelSmall,
             color = Color.Gray.copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
@@ -258,6 +260,6 @@ fun EmptyState() {
         modifier = Modifier.fillMaxWidth().padding(48.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Add your first card to start monitoring", color = Color.Gray, textAlign = TextAlign.Center)
+        Text(stringResource(R.string.home_empty_state), color = Color.Gray, textAlign = TextAlign.Center)
     }
 }
