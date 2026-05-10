@@ -44,13 +44,27 @@ fun PaymentBottomSheet(
     onDismiss: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedType     by remember { mutableStateOf("FULL") }
-    var selectedPlatform by remember { mutableStateOf("BANK_APP") }
-    var selectedDate     by remember { mutableStateOf(System.currentTimeMillis()) }
+    val successState = uiState as? CardDetailsUiState.Success
+    val existingLog = successState?.card?.lastPaymentInfo
+    val isModifying = successState?.card?.status == com.example.settled.domain.model.CardStatus.PAID
+
+    var selectedType by remember {
+        mutableStateOf(existingLog?.type ?: "FULL")
+    }
+    var selectedPlatform by remember {
+        mutableStateOf(
+            existingLog?.platform
+                ?.let { PaymentPlatformRegistry.findByLabel(it)?.id }
+                ?: "BANK_APP"
+        )
+    }
+    var selectedDate by remember {
+        mutableStateOf(existingLog?.timestamp ?: System.currentTimeMillis())
+    }
     var showDatePicker   by remember { mutableStateOf(false) }
 
-    val isSaving  = (uiState as? CardDetailsUiState.Success)?.isSavingPayment == true
-    val cardName  = (uiState as? CardDetailsUiState.Success)?.card?.cardName ?: ""
+    val isSaving  = successState?.isSavingPayment == true
+    val cardName  = successState?.card?.cardName ?: ""
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -120,7 +134,8 @@ fun PaymentBottomSheet(
 
             // ── Title ───────────────────────────────────────────────
             Text(
-                text = stringResource(R.string.card_details_record_payment),
+                text = if (isModifying) stringResource(R.string.card_details_modify_payment)
+                       else stringResource(R.string.card_details_record_payment),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface

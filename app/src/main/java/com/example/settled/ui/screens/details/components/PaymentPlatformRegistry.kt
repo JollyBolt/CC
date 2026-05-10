@@ -54,7 +54,8 @@ object PaymentPlatformRegistry {
             id = "BANK_APP",
             displayLabel = "BANK APP",
             fallbackIcon = Icons.Default.AccountBalance,
-            logoRes = null  // TODO: R.drawable.logo_payment_bank_app
+            // logoRes stays null here; PaymentBottomSheet overrides it with the bank's square logo
+            logoRes = null
         ),
         PaymentPlatform(
             id = "CRED",
@@ -89,4 +90,5 @@ object PaymentPlatformRegistry {
     )
 
     fun findById(id: String): PaymentPlatform? = all.find { it.id == id }
+    fun findByLabel(label: String): PaymentPlatform? = all.find { it.displayLabel == label }
 }

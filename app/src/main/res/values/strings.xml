@@ -38,6 +38,7 @@
     <!-- Card details screen -->
     <string name="card_details_loading">Loading…</string>
     <string name="card_details_record_payment">Record Payment</string>
+    <string name="card_details_modify_payment">Modify Payment</string>
     <string name="card_details_error_unknown">Unknown error</string>
     <string name="delete_dialog_title">Delete Card?</string>
     <string name="delete_dialog_body">Are you sure you want to remove %1$s? This action cannot be undone.</string>

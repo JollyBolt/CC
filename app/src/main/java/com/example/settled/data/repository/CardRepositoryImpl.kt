@@ -183,6 +183,7 @@ class CardRepositoryImpl @Inject constructor(
         return try {
             val paymentDate = java.time.Instant.ofEpochMilli(date)
                 .atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+            cardDao.deleteLogForCycle(cardId, paymentDate.monthValue, paymentDate.year)
             val logEntity = PaymentLogEntity(
                 cardId = cardId,
                 type = amountType,

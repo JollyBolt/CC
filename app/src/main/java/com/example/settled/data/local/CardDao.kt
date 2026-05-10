@@ -31,4 +31,7 @@ interface CardDao {
 
     @Query("SELECT * FROM payment_logs ORDER BY timestamp DESC")
     fun getAllPaymentLogs(): Flow<List<PaymentLogEntity>>
+
+    @Query("DELETE FROM payment_logs WHERE cardId = :cardId AND cycleMonth = :month AND cycleYear = :year")
+    suspend fun deleteLogForCycle(cardId: String, month: Int, year: Int)
 }

@@ -90,12 +90,17 @@ fun CardDetailsScreen(
         },
         floatingActionButton = {
             if (uiState is CardDetailsUiState.Success) {
+                val isAlreadyPaid = (uiState as CardDetailsUiState.Success).card.status == CardStatus.PAID
                 ExtendedFloatingActionButton(
                     onClick = { viewModel.onEvent(CardDetailsEvent.RecordPaymentClicked) },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Text(stringResource(R.string.card_details_record_payment), fontWeight = FontWeight.Bold)
+                    Text(
+                        if (isAlreadyPaid) stringResource(R.string.card_details_modify_payment)
+                        else stringResource(R.string.card_details_record_payment),
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }

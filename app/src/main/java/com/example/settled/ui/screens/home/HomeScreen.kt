@@ -1,5 +1,6 @@
 package com.example.settled.ui.screens.home
 
+import com.example.settled.BuildConfig
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -168,8 +169,10 @@ fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
                 letterSpacing = 1.sp,
                 modifier = Modifier.weight(1f)
             )
-            TextButton(onClick = { viewModel.onEvent(HomeEvent.SeedTestData) }) {
-                Text(stringResource(R.string.home_seed_data), style = MaterialTheme.typography.labelSmall)
+            if (BuildConfig.DEBUG) {
+                TextButton(onClick = { viewModel.onEvent(HomeEvent.SeedTestData) }) {
+                    Text(stringResource(R.string.home_seed_data), style = MaterialTheme.typography.labelSmall)
+                }
             }
         }
         
