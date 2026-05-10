@@ -2,6 +2,7 @@ package com.example.settled.ui.theme
 
 import android.app.Activity
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -25,17 +26,34 @@ private val LightColorScheme = lightColorScheme(
     onError = Color.White
 )
 
+private val DarkColorScheme = darkColorScheme(
+    primary = PrimaryBrand,
+    secondary = SecondaryBrand,
+    tertiary = TertiaryBrand,
+    background = DarkBackground,
+    surface = DarkSurface,
+    surfaceVariant = DarkSurfaceVariant,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = TextPrimaryDark,
+    onSurface = TextPrimaryDark,
+    onSurfaceVariant = TextSecondaryDark,
+    error = StatusOverdue,
+    onError = Color.White
+)
+
 @Composable
 fun SettledTheme(
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = LightColorScheme
-    
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         val window = (view.context as Activity).window
         window.statusBarColor = Color.Transparent.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true 
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
     }
 
     MaterialTheme(
