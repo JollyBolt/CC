@@ -20,6 +20,10 @@ import com.example.settled.R
 import com.example.settled.domain.model.Card
 import com.example.settled.domain.model.CardStatus
 import com.example.settled.ui.theme.SettledTheme
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d MMM, yyyy", Locale.ENGLISH)
 
 @Composable
 fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
@@ -46,7 +50,7 @@ fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${card.statementDay}, 2026", 
+                    text = card.activeStatementDate.format(DATE_FORMATTER),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Black,
                     color = Color(0xFF2E333D),
@@ -73,7 +77,7 @@ fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${card.dueDay}, 2026", 
+                    text = card.activeDueDate.format(DATE_FORMATTER),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Black,
                     color = Color(0xFF2E333D),

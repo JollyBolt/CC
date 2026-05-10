@@ -97,6 +97,8 @@ class CardRepositoryImpl @Inject constructor(
             status = status,
             minimumDueLastCycle = minimumDue,
             daysUntilDue = daysUntilDue,
+            activeStatementDate = activeStatementDate,
+            activeDueDate = activeDueDate,
             isLocked = false,
             lastPaymentInfo = lastPaymentInfo
         )

@@ -37,9 +37,6 @@ import com.example.settled.ui.screens.details.components.CardDatesBox
 import com.example.settled.ui.screens.details.components.PaymentHistorySection
 import com.example.settled.ui.screens.details.components.PaymentBottomSheet
 import com.example.settled.ui.theme.*
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
