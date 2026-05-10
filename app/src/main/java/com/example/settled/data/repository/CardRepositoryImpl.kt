@@ -1,5 +1,7 @@
 package com.example.settled.data.repository
 
+import android.content.Context
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.example.settled.core.Result
 import com.example.settled.data.local.CardDao
 import com.example.settled.data.local.CardEntity
@@ -8,6 +10,10 @@ import com.example.settled.domain.model.Card
 import com.example.settled.domain.model.CardStatus
 import com.example.settled.domain.model.PaymentLog
 import com.example.settled.domain.repository.CardRepository
+import com.example.settled.ui.widget.SettledDashboardWidget
+import com.example.settled.ui.widget.SettledMiniWidget
+import com.example.settled.ui.widget.SettledStatusWidget
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -17,7 +23,8 @@ import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class CardRepositoryImpl @Inject constructor(
-    private val cardDao: CardDao
+    private val cardDao: CardDao,
+    @ApplicationContext private val context: Context
 ) : CardRepository {
 
     private fun calculateStatus(entity: CardEntity, logs: List<PaymentLogEntity>): Card {
@@ -134,6 +141,7 @@ class CardRepositoryImpl @Inject constructor(
                 dueDay = dueDay
             )
             cardDao.insertCard(entity)
+            refreshWidgets()
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error("Failed to add card", e)
@@ -143,6 +151,7 @@ class CardRepositoryImpl @Inject constructor(
     override suspend fun deleteCard(cardId: String): Result<Unit> {
         return try {
             cardDao.deleteCard(cardId)
+            refreshWidgets()
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error("Failed to delete card", e)
@@ -193,9 +202,21 @@ class CardRepositoryImpl @Inject constructor(
                 cycleYear = paymentDate.year
             )
             cardDao.insertPaymentLog(logEntity)
+            refreshWidgets()
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error("Failed to log payment", e)
+        }
+    }
+
+    private suspend fun refreshWidgets() {
+        val manager = GlanceAppWidgetManager(context)
+        listOf(
+            SettledMiniWidget()     to manager.getGlanceIds(SettledMiniWidget::class.java),
+            SettledStatusWidget()   to manager.getGlanceIds(SettledStatusWidget::class.java),
+            SettledDashboardWidget() to manager.getGlanceIds(SettledDashboardWidget::class.java)
+        ).forEach { (widget, ids) ->
+            ids.forEach { id -> widget.update(context, id) }
         }
     }
 
