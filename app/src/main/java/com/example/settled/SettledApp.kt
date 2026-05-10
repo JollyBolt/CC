@@ -6,6 +6,7 @@ import androidx.work.Configuration
 import com.example.settled.data.auth.AuthManager
 import com.example.settled.data.repository.CardRepositoryImpl
 import com.example.settled.data.worker.scheduleCycleResetWorker
+import com.example.settled.data.worker.scheduleDueReminderWorker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +31,7 @@ class SettledApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         scheduleCycleResetWorker(this)
+        scheduleDueReminderWorker(this)
         appScope.launch {
             runCatching {
                 authManager.ensureSignedIn()
