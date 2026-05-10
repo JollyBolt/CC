@@ -37,4 +37,10 @@ interface CardDao {
 
     @Query("DELETE FROM payment_logs WHERE cardId = :cardId AND cycleMonth = :month AND cycleYear = :year")
     suspend fun deleteLogForCycle(cardId: String, month: Int, year: Int)
+
+    @Query("UPDATE cards SET isDeleted = 1")
+    suspend fun deleteAllCards()
+
+    @Query("DELETE FROM payment_logs")
+    suspend fun deleteAllPaymentLogs()
 }

@@ -9,6 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,19 +19,28 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.settled.R
 import com.example.settled.ui.theme.LightBackground
 import com.example.settled.ui.theme.PrimaryBrand
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.settled.ui.theme.SettledTheme
+import com.example.settled.ui.theme.viewmodel.ThemeEvent
+import com.example.settled.ui.theme.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    onNavigateToAbout: () -> Unit = {},
+    onNavigateToDeleteAccount: () -> Unit = {}
+) {
+    val themeViewModel: ThemeViewModel = hiltViewModel()
+    val isDarkMode by themeViewModel.isDarkMode.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(LightBackground)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         TopAppBar(
             title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.Bold) },
@@ -55,14 +66,29 @@ fun SettingsScreen() {
             item {
                 SettingsSection(title = stringResource(R.string.settings_section_data)) {
                     SettingsItem(icon = Icons.Default.FileDownload, label = stringResource(R.string.settings_item_export_csv), onClick = {})
-                    SettingsItem(icon = Icons.Default.DeleteForever, label = stringResource(R.string.settings_item_delete_account), color = Color.Red, onClick = {})
+                    SettingsItem(
+                        icon = Icons.Default.DeleteForever,
+                        label = stringResource(R.string.settings_item_delete_account),
+                        color = Color.Red,
+                        onClick = onNavigateToDeleteAccount
+                    )
                 }
             }
 
             item {
                 SettingsSection(title = stringResource(R.string.settings_section_general)) {
+                    SettingsSwitchItem(
+                        icon = Icons.Default.DarkMode,
+                        label = "Dark Mode",
+                        checked = isDarkMode,
+                        onToggle = { themeViewModel.onEvent(ThemeEvent.ToggleDarkMode) }
+                    )
                     SettingsItem(icon = Icons.Default.Notifications, label = stringResource(R.string.settings_item_notifications), onClick = {})
-                    SettingsItem(icon = Icons.Default.Info, label = stringResource(R.string.settings_item_about), onClick = {})
+                    SettingsItem(
+                        icon = Icons.Default.Info,
+                        label = stringResource(R.string.settings_item_about),
+                        onClick = onNavigateToAbout
+                    )
                 }
             }
         }
@@ -114,6 +140,27 @@ fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) 
                 content()
             }
         }
+    }
+}
+
+@Composable
+fun SettingsSwitchItem(
+    icon: ImageVector,
+    label: String,
+    checked: Boolean,
+    onToggle: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onToggle)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = Color.Gray)
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
+        Switch(checked = checked, onCheckedChange = { onToggle() })
     }
 }
 

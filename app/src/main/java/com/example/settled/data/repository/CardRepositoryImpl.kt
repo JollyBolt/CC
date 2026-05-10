@@ -241,6 +241,18 @@ class CardRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun clearAllData(): Result<Unit> {
+        return try {
+            cardDao.deleteAllCards()
+            cardDao.deleteAllPaymentLogs()
+            syncAsync { uid -> firestoreDataSource.deleteAllUserData(uid) }
+            refreshWidgets()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Failed to clear data", e)
+        }
+    }
+
     private suspend fun refreshWidgets() {
         val manager = GlanceAppWidgetManager(context)
         listOf(

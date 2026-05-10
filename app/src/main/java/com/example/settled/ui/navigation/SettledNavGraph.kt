@@ -16,12 +16,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.settled.ui.navigation.components.CustomBottomBar
 import com.example.settled.ui.screens.home.HomeScreen
 import com.example.settled.ui.screens.splash.SplashScreen
+import com.example.settled.ui.screens.settings.AboutScreen
+import com.example.settled.ui.screens.settings.DeleteAccountScreen
 import com.example.settled.ui.screens.settings.SettingsScreen
 
 sealed class Route(val route: String) {
     object Splash : Route("splash")
     object Home : Route("home")
     object Settings : Route("settings")
+    object SettingsAbout : Route("settings_about")
+    object SettingsDeleteAccount : Route("settings_delete_account")
     object AddCardFlow : Route("add_card_flow")
     
     // Add Card Wizard Routes
@@ -106,7 +110,25 @@ fun SettledNavGraph() {
             }
             
             composable(Route.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(
+                    onNavigateToAbout = { navController.navigate(Route.SettingsAbout.route) },
+                    onNavigateToDeleteAccount = { navController.navigate(Route.SettingsDeleteAccount.route) }
+                )
+            }
+
+            composable(Route.SettingsAbout.route) {
+                AboutScreen(onNavigateBack = { navController.popBackStack() })
+            }
+
+            composable(Route.SettingsDeleteAccount.route) {
+                DeleteAccountScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onAccountDeleted = {
+                        navController.navigate(Route.Splash.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
             
             navigation(startDestination = Route.AddCardBankSelect.route, route = Route.AddCardFlow.route) {
