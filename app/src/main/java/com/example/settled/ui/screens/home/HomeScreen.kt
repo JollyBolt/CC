@@ -62,32 +62,46 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(PrimaryBrand)
+            .background(LightBackground)
     ) {
         when (val state = uiState) {
             is HomeUiState.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = Color.White
+                    color = PrimaryBrand
                 )
             }
             is HomeUiState.Success -> {
                 Column(modifier = Modifier.fillMaxSize()) {
                     // Fixed header — never scrolls
-                    MetricsDashboard(
-                        cards = state.cards,
-                        viewModel = viewModel,
+                    Box(
                         modifier = Modifier
-                            .statusBarsPadding()
-                            .padding(horizontal = 24.dp)
-                            .padding(top = 16.dp, bottom = 28.dp)
-                    )
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
+                            .background(PrimaryBrand)
+                    ) {
+                        MetricsDashboard(
+                            cards = state.cards,
+                            viewModel = viewModel,
+                            modifier = Modifier
+                                .statusBarsPadding()
+                                .padding(horizontal = 24.dp)
+                                .padding(top = 16.dp, bottom = 28.dp)
+                        )
+                    }
 
-                    // Scrollable card list
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Scrollable card list — floating rounded rectangle
                     Surface(
-                        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-                        color = LightBackground,
-                        modifier = Modifier.fillMaxSize()
+                        shape = RoundedCornerShape(28.dp),
+                        color = LightSurface,
+                        shadowElevation = 2.dp,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                            .padding(bottom = 12.dp)
                     ) {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
@@ -139,7 +153,7 @@ fun HomeScreen(
                 Text(
                     stringResource(R.string.home_error_loading),
                     modifier = Modifier.align(Alignment.Center),
-                    color = Color.White
+                    color = TextPrimaryLight
                 )
             }
         }

@@ -12,7 +12,7 @@ val LightSurface = Color(0xFFFFFFFF)
 val LightSurfaceVariant = Color(0xFFE9ECEF)
 
 // Accents
-val PrimaryBrand = Color(0xFF4A5BB6) // Darker periwinkle/purple from mockup bottom nav
+val PrimaryBrand = Color(0xFF2E3D9E) // Deep blue-purple brand color
 val SecondaryBrand = Color(0xFF2D7A36) 
 val TertiaryBrand = Color(0xFFBD1532) 
 
