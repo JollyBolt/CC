@@ -3,6 +3,7 @@ package com.example.settled.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.settled.core.Result
+import com.example.settled.domain.billing.EntitlementRepository
 import com.example.settled.domain.model.Card
 import com.example.settled.domain.repository.CardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val cardRepository: CardRepository
+    private val cardRepository: CardRepository,
+    private val entitlementRepository: EntitlementRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
@@ -71,8 +73,8 @@ class HomeViewModel @Inject constructor(
     private fun checkCardLimitBeforeAdd() {
         val currentState = _uiState.value
         if (currentState is HomeUiState.Success) {
-            // For MVP UI building, trigger limits automatically if >= 3
-            if (currentState.cards.size >= 3) {
+            val atLimit = !entitlementRepository.isPro.value && currentState.cards.size >= 3
+            if (atLimit) {
                 _uiState.update { currentState.copy(showPaywall = true) }
             } else {
                 viewModelScope.launch { _uiEvent.send(HomeUiEvent.NavigateToAdd) }

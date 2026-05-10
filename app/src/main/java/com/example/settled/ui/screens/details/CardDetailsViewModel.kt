@@ -4,16 +4,22 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.settled.core.Result
+import com.example.settled.domain.billing.EntitlementRepository
+import com.example.settled.domain.model.PaymentLog
 import com.example.settled.domain.repository.CardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class CardDetailsViewModel @Inject constructor(
     private val cardRepository: CardRepository,
+    private val entitlementRepository: EntitlementRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -34,10 +40,10 @@ class CardDetailsViewModel @Inject constructor(
             if (cardResult is Result.Success && logsResult is Result.Success) {
                 val currentState = _uiState.value
                 val showSheet = if (currentState is CardDetailsUiState.Success) currentState.showPaymentSheet else false
-                
+
                 CardDetailsUiState.Success(
                     card = cardResult.data,
-                    paymentLogs = logsResult.data,
+                    paymentLogs = filterLogsByPlan(logsResult.data),
                     showPaymentSheet = showSheet,
                     showDeleteConfirmation = if (currentState is CardDetailsUiState.Success) currentState.showDeleteConfirmation else false,
                     isDeletingCard = if (currentState is CardDetailsUiState.Success) currentState.isDeletingCard else false
@@ -50,6 +56,16 @@ class CardDetailsViewModel @Inject constructor(
         }.onEach { state ->
             _uiState.value = state
         }.launchIn(viewModelScope)
+    }
+
+    private fun filterLogsByPlan(logs: List<PaymentLog>): List<PaymentLog> {
+        val monthsBack = if (entitlementRepository.isPro.value) 12L else 3L
+        val cutoff = Instant.now()
+            .atZone(ZoneId.systemDefault())
+            .minus(monthsBack, ChronoUnit.MONTHS)
+            .toInstant()
+            .toEpochMilli()
+        return logs.filter { it.timestamp >= cutoff }
     }
 
     fun onEvent(event: CardDetailsEvent) {

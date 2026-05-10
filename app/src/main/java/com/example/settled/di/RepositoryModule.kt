@@ -1,6 +1,8 @@
 package com.example.settled.di
 
+import com.example.settled.data.billing.EntitlementRepositoryImpl
 import com.example.settled.data.repository.CardRepositoryImpl
+import com.example.settled.domain.billing.EntitlementRepository
 import com.example.settled.domain.repository.CardRepository
 import dagger.Binds
 import dagger.Module
@@ -17,4 +19,10 @@ abstract class RepositoryModule {
     abstract fun bindCardRepository(
         cardRepositoryImpl: CardRepositoryImpl
     ): CardRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindEntitlementRepository(
+        entitlementRepositoryImpl: EntitlementRepositoryImpl
+    ): EntitlementRepository
 }
