@@ -1,9 +1,12 @@
 package com.example.settled.ui.navigation.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -55,12 +58,12 @@ fun CustomBottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
         // 2. Animated Indicator Layer (Weighted Row system for perfect centering)
         val weightLeading by animateFloatAsState(
             targetValue = selectedTab.toFloat(),
-            animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow),
+            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
             label = "WeightLeading"
         )
         val weightTrailing by animateFloatAsState(
             targetValue = (2 - selectedTab).toFloat(),
-            animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow),
+            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
             label = "WeightTrailing"
         )
 
@@ -135,11 +138,20 @@ fun BottomBarItem(
     val accentColor = Color(0xFF4A5BB6)
     val interactionSource = remember { MutableInteractionSource() }
 
-    // Floating Icon vertical offset
     val iconVerticalOffset by animateDpAsState(
         targetValue = if (isSelected) (-8).dp else 0.dp,
-        animationSpec = spring(dampingRatio = 0.6f, stiffness = Spring.StiffnessLow),
+        animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessMedium),
         label = "IconFloat"
+    )
+    val iconTint by animateColorAsState(
+        targetValue = if (isSelected) Color.White else Color.Gray,
+        animationSpec = tween(durationMillis = 200),
+        label = "IconTint"
+    )
+    val labelColor by animateColorAsState(
+        targetValue = if (isSelected) accentColor else Color.Gray,
+        animationSpec = tween(durationMillis = 200),
+        label = "LabelColor"
     )
 
     Column(
@@ -162,7 +174,7 @@ fun BottomBarItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isSelected) Color.White else Color.Gray,
+                tint = iconTint,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -173,7 +185,7 @@ fun BottomBarItem(
             text = label, 
             style = MaterialTheme.typography.labelSmall, 
             fontWeight = FontWeight.Bold,
-            color = if (isSelected) accentColor else Color.Gray,
+            color = labelColor,
             modifier = Modifier.padding(bottom = 12.dp),
             letterSpacing = 0.5.sp
         )
