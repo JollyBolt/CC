@@ -10,7 +10,8 @@ object SupportedCardsRegistry {
         "American Express",
         "HSBC",
         "RBL Bank",
-        "YES Bank"
+        "YES Bank",
+        "IndusInd Bank"
     )
 
     fun getCardsForBank(bankName: String): List<String> {
@@ -24,6 +25,7 @@ object SupportedCardsRegistry {
             "HSBC" -> listOf("Visa Platinum", "Cashback", "Smart Value")
             "RBL Bank" -> listOf("Shoprite", "Platinum Maxima", "Cookies")
             "YES Bank" -> listOf("Prosperity Rewards", "Premia", "First")
+            "IndusInd Bank" -> listOf("Legend", "EazyDiner", "Nexxt", "Platinum")
             else -> emptyList()
         }
     }

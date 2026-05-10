@@ -5,5 +5,5 @@
     android:targetCellWidth="3"
     android:targetCellHeight="3"
     android:updatePeriodMillis="1800000"
-    android:resizeMode="both"
+    android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen" />

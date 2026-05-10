@@ -54,38 +54,42 @@ fun CardStatusSection(card: Card, modifier: Modifier = Modifier) {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Status — all states", showBackground = true)
 @Composable
-fun CardStatusSectionPreview() {
+private fun CardStatusSectionPreview() {
     SettledTheme {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CardStatusSection(
-                card = Card(
-                    id = "1",
-                    bankName = "HDFC",
-                    cardName = "Regalia",
-                    lastFourDigits = "1234",
-                    statementDay = 10,
-                    dueDay = 28,
-                    status = CardStatus.PAID,
-                    minimumDueLastCycle = false,
-                    daysUntilDue = 18,
-                    lastPaymentInfo = PaymentLog("1", "FULL", "CRED", System.currentTimeMillis(), 10, 2026)
-                )
-            )
-            CardStatusSection(
-                card = Card(
-                    id = "2",
-                    bankName = "SBI",
-                    cardName = "Cashback",
-                    lastFourDigits = "9012",
-                    statementDay = 22,
-                    dueDay = 11,
-                    status = CardStatus.OVERDUE,
-                    minimumDueLastCycle = false,
-                    daysUntilDue = -3
-                )
-            )
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            // PAID
+            CardStatusSection(card = Card(
+                id = "1", bankName = "HDFC", cardName = "Regalia", lastFourDigits = "1234",
+                statementDay = 10, dueDay = 28, status = CardStatus.PAID,
+                minimumDueLastCycle = false, daysUntilDue = 18,
+                lastPaymentInfo = PaymentLog("1", "FULL", "CRED", System.currentTimeMillis(), 5, 2026)
+            ))
+            // DUE — multiple days
+            CardStatusSection(card = Card(
+                id = "2", bankName = "ICICI", cardName = "Amazon Pay", lastFourDigits = "5678",
+                statementDay = 26, dueDay = 15, status = CardStatus.DUE,
+                minimumDueLastCycle = false, daysUntilDue = 5
+            ))
+            // DUE — one day
+            CardStatusSection(card = Card(
+                id = "3", bankName = "Axis", cardName = "Magnus", lastFourDigits = "3456",
+                statementDay = 5, dueDay = 25, status = CardStatus.DUE,
+                minimumDueLastCycle = false, daysUntilDue = 1
+            ))
+            // DUE — today
+            CardStatusSection(card = Card(
+                id = "4", bankName = "Kotak", cardName = "811", lastFourDigits = "7890",
+                statementDay = 1, dueDay = 20, status = CardStatus.DUE,
+                minimumDueLastCycle = false, daysUntilDue = 0
+            ))
+            // OVERDUE
+            CardStatusSection(card = Card(
+                id = "5", bankName = "SBI", cardName = "Cashback", lastFourDigits = "9012",
+                statementDay = 22, dueDay = 11, status = CardStatus.OVERDUE,
+                minimumDueLastCycle = false, daysUntilDue = -3
+            ))
         }
     }
 }

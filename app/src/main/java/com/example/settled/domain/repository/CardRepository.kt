@@ -14,4 +14,5 @@ interface CardRepository {
     suspend fun logPayment(cardId: String, amountType: String, platform: String, date: Long): Result<Unit>
     suspend fun clearAllData(): Result<Unit>
     suspend fun insertDummyData() // For UI testing purposes
+    suspend fun initialSyncFromFirestore()
 }

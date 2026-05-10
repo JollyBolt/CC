@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -30,16 +31,14 @@ class AuthManager @Inject constructor(
         )
     }
 
+    fun isSignedIn(): Boolean = auth.currentUser != null
+
     fun currentUid(): String? = auth.currentUser?.uid ?: prefs.getString(PREF_UID, null)
 
-    suspend fun ensureSignedIn(): String {
-        val existing = auth.currentUser
-        if (existing != null) {
-            prefs.edit().putString(PREF_UID, existing.uid).apply()
-            return existing.uid
-        }
-        val result = auth.signInAnonymously().await()
-        val uid = requireNotNull(result.user?.uid) { "Anonymous sign-in succeeded but uid is null" }
+    suspend fun signInWithGoogle(idToken: String): String {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        val result = auth.signInWithCredential(credential).await()
+        val uid = requireNotNull(result.user?.uid) { "Google sign-in succeeded but uid is null" }
         prefs.edit().putString(PREF_UID, uid).apply()
         return uid
     }

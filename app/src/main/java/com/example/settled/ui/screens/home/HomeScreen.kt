@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Shield
@@ -14,16 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
@@ -44,12 +41,11 @@ import com.example.settled.ui.theme.*
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToAdd: () -> Unit,
-    onNavigateToDetails: (String) -> Unit
+    onNavigateToDetails: (String) -> Unit,
+    onNavigateToSignIn: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val density = LocalDensity.current
-    var contentHeightPx by remember { mutableIntStateOf(Int.MAX_VALUE) }
 
     LaunchedEffect(viewModel.uiEvent, lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -57,6 +53,7 @@ fun HomeScreen(
                 when (event) {
                     HomeUiEvent.NavigateToAdd -> onNavigateToAdd()
                     is HomeUiEvent.NavigateToDetails -> onNavigateToDetails(event.cardId)
+                    HomeUiEvent.NavigateToSignIn -> onNavigateToSignIn()
                 }
             }
         }
@@ -65,58 +62,57 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(LightBackground)
+            .background(PrimaryBrand)
     ) {
         when (val state = uiState) {
             is HomeUiState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
             }
             is HomeUiState.Success -> {
-                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                    val viewportHeightPx = constraints.maxHeight
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // Fixed header — never scrolls
+                    MetricsDashboard(
+                        cards = state.cards,
+                        viewModel = viewModel,
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .padding(horizontal = 24.dp)
+                            .padding(top = 16.dp, bottom = 28.dp)
+                    )
 
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .onSizeChanged { contentHeightPx = it.height }
-                            ) {
-                                MetricsDashboard(cards = state.cards, viewModel = viewModel)
-
+                    // Scrollable card list
+                    Surface(
+                        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                        color = LightBackground,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(bottom = 32.dp)
+                        ) {
+                            item {
                                 Text(
                                     text = stringResource(R.string.home_active_cards, state.cards.size),
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.ExtraBold,
-                                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+                                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp),
                                     color = Color(0xFF1A1C1E)
                                 )
-
-                                if (state.cards.isNotEmpty()) {
-                                    state.cards.forEach { card ->
-                                        CardListItem(
-                                            card = card,
-                                            onClick = { onNavigateToDetails(card.id) }
-                                        )
-                                    }
-                                } else {
-                                    EmptyState()
+                            }
+                            if (state.cards.isNotEmpty()) {
+                                items(state.cards) { card ->
+                                    CardListItem(
+                                        card = card,
+                                        onClick = { onNavigateToDetails(card.id) }
+                                    )
                                 }
+                            } else {
+                                item { EmptyState() }
                             }
-                        }
-
-                        item {
-                            val remainingHeight = with(density) {
-                                (viewportHeightPx - contentHeightPx).coerceAtLeast(0).toDp()
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .defaultMinSize(minHeight = remainingHeight),
-                                contentAlignment = Alignment.BottomCenter
-                            ) {
-                                PrivacyFooter()
-                            }
+                            item { PrivacyFooter() }
                         }
                     }
                 }
@@ -140,22 +136,24 @@ fun HomeScreen(
                 }
             }
             is HomeUiState.Error -> {
-                Text(stringResource(R.string.home_error_loading), modifier = Modifier.align(Alignment.Center))
+                Text(
+                    stringResource(R.string.home_error_loading),
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
             }
         }
     }
 }
 
 @Composable
-fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
+fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel, modifier: Modifier = Modifier) {
     val paidCount = cards.count { it.status == CardStatus.PAID }
     val dueCount = cards.count { it.status == CardStatus.DUE }
     val overdueCount = cards.count { it.status == CardStatus.OVERDUE }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -165,13 +163,13 @@ fun MetricsDashboard(cards: List<Card>, viewModel: HomeViewModel) {
                 text = stringResource(R.string.home_account_overview),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color.Gray,
+                color = Color.White.copy(alpha = 0.7f),
                 letterSpacing = 1.sp,
                 modifier = Modifier.weight(1f)
             )
             if (BuildConfig.DEBUG) {
                 TextButton(onClick = { viewModel.onEvent(HomeEvent.SeedTestData) }) {
-                    Text(stringResource(R.string.home_seed_data), style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(R.string.home_seed_data), style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.7f))
                 }
             }
         }

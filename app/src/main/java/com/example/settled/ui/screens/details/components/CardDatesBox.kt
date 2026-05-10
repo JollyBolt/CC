@@ -89,24 +89,30 @@ fun CardDatesBox(card: Card, modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Dates — PAID", showBackground = true)
 @Composable
-fun CardDatesBoxPreview() {
+private fun CardDatesBoxPaidPreview() {
     SettledTheme {
         Box(modifier = Modifier.padding(16.dp)) {
-            CardDatesBox(
-                card = Card(
-                    id = "1",
-                    bankName = "HDFC",
-                    cardName = "Regalia",
-                    lastFourDigits = "1234",
-                    statementDay = 10,
-                    dueDay = 28,
-                    status = CardStatus.PAID,
-                    minimumDueLastCycle = false,
-                    daysUntilDue = 18
-                )
-            )
+            CardDatesBox(card = Card(
+                id = "1", bankName = "HDFC", cardName = "Regalia", lastFourDigits = "1234",
+                statementDay = 10, dueDay = 28, status = CardStatus.PAID,
+                minimumDueLastCycle = false, daysUntilDue = 18
+            ))
+        }
+    }
+}
+
+@Preview(name = "Dates — cross-month due (statement 25, due 5)", showBackground = true)
+@Composable
+private fun CardDatesBoxCrossMonthPreview() {
+    SettledTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            CardDatesBox(card = Card(
+                id = "2", bankName = "ICICI", cardName = "Amazon Pay", lastFourDigits = "5678",
+                statementDay = 25, dueDay = 5, status = CardStatus.DUE,
+                minimumDueLastCycle = false, daysUntilDue = 4
+            ))
         }
     }
 }

@@ -19,9 +19,11 @@ import com.example.settled.ui.screens.splash.SplashScreen
 import com.example.settled.ui.screens.settings.AboutScreen
 import com.example.settled.ui.screens.settings.DeleteAccountScreen
 import com.example.settled.ui.screens.settings.SettingsScreen
+import com.example.settled.ui.screens.signin.SignInScreen
 
 sealed class Route(val route: String) {
     object Splash : Route("splash")
+    object SignIn : Route("sign_in")
     object Home : Route("home")
     object Settings : Route("settings")
     object SettingsAbout : Route("settings_about")
@@ -53,8 +55,9 @@ fun SettledNavGraph() {
         else -> 0
     }
 
-    // Hide bottom bar only on Splash screen
+    // Hide bottom bar on Splash and SignIn screens
     val showBottomBar = currentDestination?.route != Route.Splash.route
+            && currentDestination?.route != Route.SignIn.route
 
     Scaffold(
         bottomBar = {
@@ -90,7 +93,7 @@ fun SettledNavGraph() {
         NavHost(
             navController = navController, 
             startDestination = Route.Splash.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             composable(Route.Splash.route) {
                 SplashScreen(
@@ -102,10 +105,21 @@ fun SettledNavGraph() {
                 )
             }
             
+            composable(Route.SignIn.route) {
+                SignInScreen(
+                    onSignedIn = {
+                        navController.navigate(Route.AddCardFlow.route) {
+                            popUpTo(Route.SignIn.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Route.Home.route) {
                 HomeScreen(
                     onNavigateToAdd = { navController.navigate(Route.AddCardFlow.route) },
-                    onNavigateToDetails = { cardId -> navController.navigate(Route.Details.createRoute(cardId)) }
+                    onNavigateToDetails = { cardId -> navController.navigate(Route.Details.createRoute(cardId)) },
+                    onNavigateToSignIn = { navController.navigate(Route.SignIn.route) }
                 )
             }
             

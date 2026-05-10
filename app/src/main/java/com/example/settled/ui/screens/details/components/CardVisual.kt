@@ -165,50 +165,33 @@ fun CardChip() {
     )
 }
 
-@Preview
+private fun previewCard(id: String, bankName: String, cardName: String, digits: String, status: CardStatus, days: Int) =
+    Card(id = id, bankName = bankName, cardName = cardName, lastFourDigits = digits,
+        statementDay = 10, dueDay = 28, status = status, minimumDueLastCycle = false, daysUntilDue = days)
+
+@Preview(name = "Cards — HDFC / ICICI / SBI / Axis", showBackground = true)
 @Composable
-fun CardVisualPreview() {
+private fun CardVisualPreview1() {
     SettledTheme {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            CardVisual(
-                card = Card(
-                    id = "1",
-                    bankName = "HDFC",
-                    cardName = "Regalia Gold",
-                    lastFourDigits = "1234",
-                    statementDay = 10,
-                    dueDay = 30,
-                    status = CardStatus.PAID,
-                    minimumDueLastCycle = false,
-                    daysUntilDue = 18
-                )
-            )
-            CardVisual(
-                card = Card(
-                    id = "2",
-                    bankName = "ICICI",
-                    cardName = "Amazon Pay",
-                    lastFourDigits = "5678",
-                    statementDay = 26,
-                    dueDay = 15,
-                    status = CardStatus.DUE,
-                    minimumDueLastCycle = false,
-                    daysUntilDue = 4
-                )
-            )
-            CardVisual(
-                card = Card(
-                    id = "3",
-                    bankName = "SBI",
-                    cardName = "Cashback Card",
-                    lastFourDigits = "9012",
-                    statementDay = 22,
-                    dueDay = 10,
-                    status = CardStatus.DUE,
-                    minimumDueLastCycle = false,
-                    daysUntilDue = 0
-                )
-            )
+            CardVisual(card = previewCard("1", "HDFC", "Regalia Gold", "1234", CardStatus.PAID, 18))
+            CardVisual(card = previewCard("2", "ICICI", "Amazon Pay", "5678", CardStatus.DUE, 4))
+            CardVisual(card = previewCard("3", "SBI", "Cashback Card", "9012", CardStatus.OVERDUE, -2))
+            CardVisual(card = previewCard("4", "Axis", "Magnus", "3456", CardStatus.DUE, 1))
+        }
+    }
+}
+
+@Preview(name = "Cards — Kotak / HSBC / YES / RBL / Amex", showBackground = true)
+@Composable
+private fun CardVisualPreview2() {
+    SettledTheme {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            CardVisual(card = previewCard("5", "Kotak", "811", "7890", CardStatus.PAID, 10))
+            CardVisual(card = previewCard("6", "HSBC", "Cashback", "2345", CardStatus.DUE, 7))
+            CardVisual(card = previewCard("7", "YES", "Marquee", "6789", CardStatus.OVERDUE, -5))
+            CardVisual(card = previewCard("8", "RBL", "Shoprite", "0123", CardStatus.DUE, 3))
+            CardVisual(card = previewCard("9", "American Express", "Platinum", "4567", CardStatus.PAID, 20))
         }
     }
 }

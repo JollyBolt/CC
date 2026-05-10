@@ -3,6 +3,7 @@ package com.example.settled.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.settled.core.Result
+import com.example.settled.data.auth.AuthManager
 import com.example.settled.domain.billing.EntitlementRepository
 import com.example.settled.domain.model.Card
 import com.example.settled.domain.repository.CardRepository
@@ -22,7 +23,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val cardRepository: CardRepository,
-    private val entitlementRepository: EntitlementRepository
+    private val entitlementRepository: EntitlementRepository,
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
@@ -39,10 +41,9 @@ class HomeViewModel @Inject constructor(
         cardRepository.getAllCards().onEach { result ->
             when (result) {
                 is Result.Success -> {
-                    // Sort order: OVERDUE -> DUE -> PAID
                     val sortedCards = result.data.sortedWith(
-                        compareBy<Card> { it.status.ordinal }
-                            .thenBy { it.daysUntilDue }
+                        compareByDescending<Card> { it.status.ordinal }
+                            .thenBy { it.cardName }
                     )
                     _uiState.update { 
                         if (it is HomeUiState.Success) it.copy(cards = sortedCards)
@@ -71,6 +72,10 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun checkCardLimitBeforeAdd() {
+        if (!authManager.isSignedIn()) {
+            viewModelScope.launch { _uiEvent.send(HomeUiEvent.NavigateToSignIn) }
+            return
+        }
         val currentState = _uiState.value
         if (currentState is HomeUiState.Success) {
             val atLimit = !entitlementRepository.isPro.value && currentState.cards.size >= 3

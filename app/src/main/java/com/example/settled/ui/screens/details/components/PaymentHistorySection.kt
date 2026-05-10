@@ -55,15 +55,22 @@ fun PaymentHistorySection(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Payment history — with logs", showBackground = true)
 @Composable
-fun PaymentHistorySectionPreview() {
+private fun PaymentHistorySectionWithLogsPreview() {
     SettledTheme {
-        PaymentHistorySection(
-            paymentLogs = listOf(
-                PaymentLog("1", "FULL", "Mobiquick", System.currentTimeMillis(), 10, 2026),
-                PaymentLog("2", "MINIMUM", "CRED", System.currentTimeMillis() - 86400000, 9, 2026)
-            )
-        )
+        PaymentHistorySection(paymentLogs = listOf(
+            PaymentLog("1", "FULL", "CRED", System.currentTimeMillis(), 5, 2026),
+            PaymentLog("2", "MINIMUM", "GPAY", System.currentTimeMillis() - 86400000L * 32, 4, 2026),
+            PaymentLog("3", "FULL", "BANK APP", System.currentTimeMillis() - 86400000L * 63, 3, 2026),
+        ))
+    }
+}
+
+@Preview(name = "Payment history — empty", showBackground = true)
+@Composable
+private fun PaymentHistorySectionEmptyPreview() {
+    SettledTheme {
+        PaymentHistorySection(paymentLogs = emptyList())
     }
 }

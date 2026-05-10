@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.settled.core.Result
+import com.example.settled.data.prefs.PaymentPreferences
 import com.example.settled.domain.billing.EntitlementRepository
 import com.example.settled.domain.model.PaymentLog
 import com.example.settled.domain.repository.CardRepository
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class CardDetailsViewModel @Inject constructor(
     private val cardRepository: CardRepository,
     private val entitlementRepository: EntitlementRepository,
+    private val paymentPreferences: PaymentPreferences,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -44,6 +46,7 @@ class CardDetailsViewModel @Inject constructor(
                 CardDetailsUiState.Success(
                     card = cardResult.data,
                     paymentLogs = filterLogsByPlan(logsResult.data),
+                    customPlatforms = paymentPreferences.getCustomPlatforms(),
                     showPaymentSheet = showSheet,
                     showDeleteConfirmation = if (currentState is CardDetailsUiState.Success) currentState.showDeleteConfirmation else false,
                     isDeletingCard = if (currentState is CardDetailsUiState.Success) currentState.isDeletingCard else false
@@ -97,6 +100,13 @@ class CardDetailsViewModel @Inject constructor(
                 }
             }
             CardDetailsEvent.ConfirmDeleteCard -> deleteCard()
+            is CardDetailsEvent.SaveCustomPlatform -> {
+                paymentPreferences.saveCustomPlatform(event.name)
+                val state = _uiState.value
+                if (state is CardDetailsUiState.Success) {
+                    _uiState.update { state.copy(customPlatforms = paymentPreferences.getCustomPlatforms()) }
+                }
+            }
         }
     }
     

@@ -7,7 +7,9 @@ import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.settled.R
 
@@ -44,8 +46,16 @@ data class PaymentPlatform(
      * Set to null until the actual logo PNG is added.
      * Logo files live in: res/drawable/payment_platforms/
      */
-    @DrawableRes val logoRes: Int? = null
+    @DrawableRes val logoRes: Int? = null,
+    /** For user-added custom platforms: 1-2 letter initials rendered in the icon box. */
+    val initials: String? = null
 )
+
+fun computeInitials(name: String): String {
+    val words = name.trim().split(" ").filter { it.isNotEmpty() }
+    return if (words.size >= 2) "${words[0].first()}${words[1].first()}".uppercase()
+    else words.firstOrNull()?.take(2)?.uppercase() ?: "?"
+}
 
 object PaymentPlatformRegistry {
 
@@ -86,6 +96,18 @@ object PaymentPlatformRegistry {
             displayLabel = "PAYTM",
             fallbackIcon = Icons.Default.AccountBalanceWallet,
             logoRes = R.drawable.logo_payment_paytm
+        ),
+        PaymentPlatform(
+            id = "MOBIKWIK",
+            displayLabel = "MOBIKWIK",
+            fallbackIcon = Icons.Default.Savings,
+            logoRes = null
+        ),
+        PaymentPlatform(
+            id = "BHIM",
+            displayLabel = "BHIM",
+            fallbackIcon = Icons.Default.Smartphone,
+            logoRes = null
         ),
     )
 

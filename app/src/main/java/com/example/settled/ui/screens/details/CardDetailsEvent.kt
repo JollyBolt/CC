@@ -9,4 +9,5 @@ sealed class CardDetailsEvent {
     object DeleteCardClicked : CardDetailsEvent()
     object DismissDeleteConfirmation : CardDetailsEvent()
     object ConfirmDeleteCard : CardDetailsEvent()
+    data class SaveCustomPlatform(val name: String) : CardDetailsEvent()
 }

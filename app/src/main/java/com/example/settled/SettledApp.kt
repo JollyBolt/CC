@@ -34,8 +34,9 @@ class SettledApp : Application(), Configuration.Provider {
         scheduleDueReminderWorker(this)
         appScope.launch {
             runCatching {
-                authManager.ensureSignedIn()
-                cardRepository.initialSyncFromFirestore()
+                if (authManager.isSignedIn()) {
+                    cardRepository.initialSyncFromFirestore()
+                }
             }
         }
     }

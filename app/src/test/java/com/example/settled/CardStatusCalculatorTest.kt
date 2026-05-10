@@ -97,8 +97,8 @@ class CardStatusCalculatorTest {
     @Test
     fun `statement day 31 in 30-day month is coerced to day 30`() {
         val entity = card(statementDay = 31, dueDay = 15)
-        // April has 30 days; today = April 15 → statement = April 30
-        val today = LocalDate.of(2026, 4, 15)
+        // April has 30 days; today = May 1 (before May 31 statement) → active cycle = April 30
+        val today = LocalDate.of(2026, 5, 1)
         val result = calculateCardStatus(entity, emptyList(), today)
         assertEquals(30, result.activeStatementDate.dayOfMonth)
     }
@@ -132,8 +132,8 @@ class CardStatusCalculatorTest {
     @Test
     fun `statement day 29 in non-leap Feb is coerced to 28`() {
         val entity = card(statementDay = 29, dueDay = 15)
-        // 2025 is not a leap year; today = Feb 15 2025 → active statement Feb 28
-        val today = LocalDate.of(2025, 2, 15)
+        // 2025 is not a leap year; today = Mar 5 2025 (before Mar 29 statement) → active cycle = Feb 28
+        val today = LocalDate.of(2025, 3, 5)
         val result = calculateCardStatus(entity, emptyList(), today)
         assertEquals(28, result.activeStatementDate.dayOfMonth)
     }

@@ -8,6 +8,7 @@ sealed class CardDetailsUiState {
     data class Success(
         val card: Card,
         val paymentLogs: List<PaymentLog>,
+        val customPlatforms: List<String> = emptyList(),
         val showPaymentSheet: Boolean = false,
         val isSavingPayment: Boolean = false,
         val paymentError: String? = null,

@@ -100,4 +100,10 @@
     <!-- Common actions -->
     <string name="action_ok">OK</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_add">Add</string>
+
+    <!-- Sign In -->
+    <string name="sign_in_subtitle">Sign in to add and sync your cards</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_loading">Signing in…</string>
 </resources>

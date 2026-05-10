@@ -15,5 +15,6 @@ data class Card(
     val activeStatementDate: LocalDate = LocalDate.now(),
     val activeDueDate: LocalDate = LocalDate.now(),
     val isLocked: Boolean = false, // True if they slipped under a plan boundary
-    val lastPaymentInfo: PaymentLog? = null
+    val lastPaymentInfo: PaymentLog? = null,
+    val lastUsedPlatform: String? = null
 )

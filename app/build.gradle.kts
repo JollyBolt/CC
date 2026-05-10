@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -102,6 +103,9 @@ dependencies {
 
     // Google Play Billing
     implementation(libs.billing.ktx)
+
+    // Google Sign-In
+    implementation(libs.play.services.auth)
 
     // WorkManager + Hilt integration
     implementation(libs.androidx.work.runtime.ktx)

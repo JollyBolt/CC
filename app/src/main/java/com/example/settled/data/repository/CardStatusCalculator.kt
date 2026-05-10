@@ -41,11 +41,14 @@ internal fun calculateCardStatus(
         LocalDate.of(next.year, next.monthValue, safeDueDay)
     }
 
-    val latestLog = logs.filter {
-        it.cardId == entity.id &&
-            it.cycleMonth == activeStatementDate.monthValue &&
+    val cardLogs = logs.filter { it.cardId == entity.id }
+
+    val latestLog = cardLogs.filter {
+        it.cycleMonth == activeStatementDate.monthValue &&
             it.cycleYear == activeStatementDate.year
     }.maxByOrNull { it.timestamp }
+
+    val lastUsedPlatform = cardLogs.maxByOrNull { it.timestamp }?.platform
 
     val daysUntilDue = ChronoUnit.DAYS.between(today, activeDueDate).toInt()
 
@@ -79,6 +82,7 @@ internal fun calculateCardStatus(
         activeStatementDate = activeStatementDate,
         activeDueDate      = activeDueDate,
         isLocked           = false,
-        lastPaymentInfo    = lastPaymentInfo
+        lastPaymentInfo    = lastPaymentInfo,
+        lastUsedPlatform   = lastUsedPlatform
     )
 }

@@ -39,7 +39,7 @@ class CardRepositoryImpl @Inject constructor(
         syncScope.launch { runCatching { block(uid) } }
     }
 
-    suspend fun initialSyncFromFirestore() {
+    override suspend fun initialSyncFromFirestore() {
         val uid = authManager.currentUid() ?: return
         val isEmpty = (getAllCards().first() as? Result.Success)?.data?.isEmpty() ?: true
         if (!isEmpty) return
@@ -131,20 +131,22 @@ class CardRepositoryImpl @Inject constructor(
 
     override suspend fun logPayment(cardId: String, amountType: String, platform: String, date: Long): Result<Unit> {
         return try {
-            val paymentDate = java.time.Instant.ofEpochMilli(date)
-                .atZone(java.time.ZoneId.systemDefault()).toLocalDate()
-            cardDao.deleteLogForCycle(cardId, paymentDate.monthValue, paymentDate.year)
+            val cardEntity = cardDao.getCardById(cardId).first()
+                ?: return Result.Error("Card not found")
+            // Key the log by the active billing cycle, not the payment date
+            val activeCycle = calculateCardStatus(cardEntity, emptyList()).activeStatementDate
+            cardDao.deleteLogForCycle(cardId, activeCycle.monthValue, activeCycle.year)
             val logEntity = PaymentLogEntity(
                 cardId = cardId,
                 type = amountType,
                 platform = platform,
                 timestamp = date,
-                cycleMonth = paymentDate.monthValue,
-                cycleYear = paymentDate.year
+                cycleMonth = activeCycle.monthValue,
+                cycleYear = activeCycle.year
             )
             cardDao.insertPaymentLog(logEntity)
             syncAsync { uid ->
-                firestoreDataSource.deleteLogForCycle(uid, cardId, paymentDate.monthValue, paymentDate.year)
+                firestoreDataSource.deleteLogForCycle(uid, cardId, activeCycle.monthValue, activeCycle.year)
                 firestoreDataSource.syncPaymentLog(uid, logEntity)
             }
             refreshWidgets()
@@ -180,8 +182,23 @@ class CardRepositoryImpl @Inject constructor(
     override suspend fun insertDummyData() {
         val dummies = listOf(
             CardEntity(id = "test-icici-amazon", bankName = "ICICI", cardName = "Amazon Pay", lastFourDigits = "3456", statementDay = 26, dueDay = 15),
-            CardEntity(id = "test-sbi-cashback", bankName = "SBI", cardName = "Cashback Card", lastFourDigits = "9012", statementDay = 22, dueDay = 10)
+            // dueDay=5, statementDay=22 → active=Apr 22, due=May 5, today May 10 → OVERDUE
+            CardEntity(id = "test-sbi-cashback", bankName = "SBI", cardName = "Cashback Card", lastFourDigits = "9012", statementDay = 22, dueDay = 5),
+            // statementDay=1 → active=May 1, pre-seeded as PAID
+            CardEntity(id = "test-induind-legend", bankName = "IndusInd Bank", cardName = "Legend", lastFourDigits = "7777", statementDay = 1, dueDay = 20)
         )
         dummies.forEach { cardDao.insertCard(it) }
+
+        // Pre-seed IndusInd as PAID for the current cycle (May 2026)
+        cardDao.insertPaymentLog(
+            PaymentLogEntity(
+                cardId = "test-induind-legend",
+                type = "FULL",
+                platform = "CRED",
+                timestamp = System.currentTimeMillis(),
+                cycleMonth = 5,
+                cycleYear = 2026
+            )
+        )
     }
 }

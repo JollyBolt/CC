@@ -42,21 +42,14 @@ fun PaymentLogItem(log: PaymentLog, modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Payment log items", showBackground = true)
 @Composable
-fun PaymentLogItemPreview() {
+private fun PaymentLogItemPreview() {
     SettledTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            PaymentLogItem(
-                log = PaymentLog(
-                    id = "1",
-                    type = "FULL PAYMENT",
-                    platform = "Mobiquick",
-                    timestamp = System.currentTimeMillis(),
-                    cycleMonth = 10,
-                    cycleYear = 2026
-                )
-            )
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            PaymentLogItem(log = PaymentLog("1", "FULL", "CRED", System.currentTimeMillis(), 5, 2026))
+            PaymentLogItem(log = PaymentLog("2", "MINIMUM", "GPAY", System.currentTimeMillis() - 86400000L * 32, 4, 2026))
+            PaymentLogItem(log = PaymentLog("3", "FULL", "BANK APP", System.currentTimeMillis() - 86400000L * 63, 3, 2026))
         }
     }
 }
