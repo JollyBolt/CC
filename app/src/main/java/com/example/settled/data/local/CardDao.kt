@@ -25,6 +25,9 @@ interface CardDao {
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPaymentLog(log: PaymentLogEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPaymentLogIgnore(log: PaymentLogEntity)
     
     @Query("SELECT * FROM payment_logs WHERE cardId = :cardId ORDER BY timestamp DESC")
     fun getLogsForCard(cardId: String): Flow<List<PaymentLogEntity>>

@@ -2,6 +2,7 @@ package com.example.settled
 
 import android.app.Application
 import com.example.settled.data.auth.AuthManager
+import com.example.settled.data.repository.CardRepositoryImpl
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,13 +14,17 @@ import javax.inject.Inject
 class SettledApp : Application() {
 
     @Inject lateinit var authManager: AuthManager
+    @Inject lateinit var cardRepository: CardRepositoryImpl
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
         super.onCreate()
         appScope.launch {
-            runCatching { authManager.ensureSignedIn() }
+            runCatching {
+                authManager.ensureSignedIn()
+                cardRepository.initialSyncFromFirestore()
+            }
         }
     }
 }

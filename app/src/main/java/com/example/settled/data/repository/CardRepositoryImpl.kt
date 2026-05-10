@@ -3,9 +3,11 @@ package com.example.settled.data.repository
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.example.settled.core.Result
+import com.example.settled.data.auth.AuthManager
 import com.example.settled.data.local.CardDao
 import com.example.settled.data.local.CardEntity
 import com.example.settled.data.local.PaymentLogEntity
+import com.example.settled.data.remote.FirestoreDataSource
 import com.example.settled.domain.model.Card
 import com.example.settled.domain.model.CardStatus
 import com.example.settled.domain.model.PaymentLog
@@ -14,9 +16,14 @@ import com.example.settled.ui.widget.SettledDashboardWidget
 import com.example.settled.ui.widget.SettledMiniWidget
 import com.example.settled.ui.widget.SettledStatusWidget
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.ChronoUnit
@@ -24,8 +31,27 @@ import javax.inject.Inject
 
 class CardRepositoryImpl @Inject constructor(
     private val cardDao: CardDao,
+    private val firestoreDataSource: FirestoreDataSource,
+    private val authManager: AuthManager,
     @ApplicationContext private val context: Context
 ) : CardRepository {
+
+    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private fun syncAsync(block: suspend (uid: String) -> Unit) {
+        val uid = authManager.currentUid() ?: return
+        syncScope.launch { runCatching { block(uid) } }
+    }
+
+    suspend fun initialSyncFromFirestore() {
+        val uid = authManager.currentUid() ?: return
+        val isEmpty = (getAllCards().first() as? Result.Success)?.data?.isEmpty() ?: true
+        if (!isEmpty) return
+        val remoteCards = firestoreDataSource.fetchAllCards(uid)
+        val remoteLogs  = firestoreDataSource.fetchAllLogs(uid)
+        remoteCards.forEach { cardDao.insertCard(it) }
+        remoteLogs.forEach { cardDao.insertPaymentLogIgnore(it) }
+    }
 
     private fun calculateStatus(entity: CardEntity, logs: List<PaymentLogEntity>): Card {
         val now = LocalDate.now()
@@ -141,6 +167,7 @@ class CardRepositoryImpl @Inject constructor(
                 dueDay = dueDay
             )
             cardDao.insertCard(entity)
+            syncAsync { uid -> firestoreDataSource.syncCard(uid, entity) }
             refreshWidgets()
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -151,6 +178,7 @@ class CardRepositoryImpl @Inject constructor(
     override suspend fun deleteCard(cardId: String): Result<Unit> {
         return try {
             cardDao.deleteCard(cardId)
+            syncAsync { uid -> firestoreDataSource.deleteCard(uid, cardId) }
             refreshWidgets()
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -202,6 +230,10 @@ class CardRepositoryImpl @Inject constructor(
                 cycleYear = paymentDate.year
             )
             cardDao.insertPaymentLog(logEntity)
+            syncAsync { uid ->
+                firestoreDataSource.deleteLogForCycle(uid, cardId, paymentDate.monthValue, paymentDate.year)
+                firestoreDataSource.syncPaymentLog(uid, logEntity)
+            }
             refreshWidgets()
             Result.Success(Unit)
         } catch (e: Exception) {
