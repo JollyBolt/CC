@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Settled** is an Android credit card payment tracker for Indian banks. Users add their credit cards, and the app tracks payment due dates, records payments (full/minimum), and shows a 3-state status per card.
 
+## Commit Style
+
+- Never add a `Co-Authored-By` trailer to commit messages.
+
 ## Build Commands
 
 ```bash
